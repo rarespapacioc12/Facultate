@@ -13,13 +13,13 @@ Suporturile de curs, laborator, cerințele de proiect se găsesc pe platforma [c
 ###  Formula Generală
 Nota finală se calculează combinând examenul și laboratorul în proporții egale:
 
-$$Nota\_Finală = 50\% \times Nota\_Examen + 50\% \times Nota\_Laborator$$
+$$Nota_{Finală} = 50\% × Nota_{Examen} + 50\% × Nota_{Laborator}$$
 
 ---
 
 ### Detalii Notă Laborator
 * **Structură:** 1 punct din oficiu + maximum 9 puncte din test.
-* **Calcul:** Nota de laborator **nu se rotunjește** separat. Dacă obții un 9.25, acesta va fi folosit ca atare în formula de mai sus (ex: $0.5 \times 9.25$).
+* **Calcul:** Nota de laborator **nu se rotunjește** separat. Dacă obții un 9.25, acesta va fi folosit ca atare în formula de mai sus (ex: 0.5 × 9.25).
 
 ---
 
@@ -51,7 +51,7 @@ Testul se susține pe calculator în ultima săptămână a semestrului (02-05 i
 Nota de la examenul de curs este compusă din proiect și examenul grilă.
 
 ### Formula Calcul Examen
-$$Nota\_examen\_curs = 30\% \times Nota\_proiect + 70\% \times Nota\_examen\_grilă$$
+$$Nota_{examen\_curs} = 30\% × Nota_{proiect} + 70\% × Nota_{examen\_grilă}$$
 
 ### Componente și Condiții
 1. **Notă proiect:**
@@ -64,10 +64,6 @@ $$Nota\_examen\_curs = 30\% \times Nota\_proiect + 70\% \times Nota\_examen\_gri
 > [!IMPORTANT]
 > Pentru a promova, este obligatoriu ca ambele componente (Proiect și Grilă) să fie minim 5.
 > Similar laboratorului, nota de examen se rotunjește o singură dată, la finalul calculului general.
-
----
-
->[!PREZENȚE]
 >Pentru a putea susține examenul și testul de laborator, este nevoie să aveți minim **10 prezențe** la laborator.
 
 ## Rezumat Formule
