@@ -13,7 +13,7 @@ Suporturile de curs, laborator, cerințele de proiect se găsesc pe platforma [c
 ###  Formula Generală
 Nota finală se calculează combinând examenul și laboratorul în proporții egale:
 
-$$Nota_{Final} = 50\% \times Nota_{Examen} + 50\% \times Nota_{Laborator}$$
+$$Nota_{Final} = 0.5 \times Nota_{Examen} + 0.5 \times Nota_{Laborator}$$
 
 ---
 
@@ -51,7 +51,7 @@ Testul se susține pe calculator în ultima săptămână a semestrului (02-05 i
 Nota de la examenul de curs este compusă din proiect și examenul grilă.
 
 ### Formula Calcul Examen
-$$Nota_{examen} = 30\% \times Nota_{proiect} + 70\% \times Nota_{grila}$$
+$$Nota_{examen} = 0.3 \times Nota_{proiect} + 0.7 \times Nota_{grila}$$
 
 ### Componente și Condiții
 1. **Notă proiect:**
