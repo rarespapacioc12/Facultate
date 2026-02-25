@@ -64,7 +64,7 @@ $$Nota_{examen} = 0.3 \times Nota_{proiect} + 0.7 \times Nota_{grila}$$
 > [!IMPORTANT]
 > Pentru a promova, este obligatoriu ca ambele componente (Proiect și Grilă) să fie minim 5.
 > Similar laboratorului, nota de examen se rotunjește o singură dată, la finalul calculului general.
->Pentru a putea susține examenul și testul de laborator, este nevoie să aveți minim **10 prezențe** la laborator.
+>Pentru a putea susține examenul și testul de laborator, este nevoie să aveți minimum **10 prezențe** la laborator.
 
 ## Rezumat Formule
 | Componentă | Pondere | Condiție Promovare |
