@@ -129,7 +129,65 @@
 // 4. Se da o permutare. Fie i < j si pi > pj. Cate perechi i si j sunt?
 // Idee: se foloseste merge sort.
 
-// TO-DO: implementare solutie
+// #include <iostream>
+// #include <vector>
+
+// const int MAX = 1e5;
+
+// int n, v[MAX], a[MAX], b[MAX];
+// long long cnt;
+
+// void merge_sides(int l, int m, int r){
+//     int i = l, j = m + 1, t = 0, u = 0, poz = l;
+
+//     while(i <= m){
+//         a[t++] = v[i++];
+//     }
+
+//     while(j <= r){
+//         b[u++] = v[j++];
+//     }
+
+//     i = j = 0;
+//     while(i < t and j < u){
+//         if(a[i] < b[j]){
+//             cnt += j;
+//             v[poz++] = a[i++];
+//         }
+//         else{
+//             v[poz++] = b[j++];
+//         }
+//     }
+
+//     while(i < t){
+//         v[poz++] = a[i++];
+//         cnt += j;
+//     }
+    
+//     while(j < u)
+//         v[poz++] = b[j++];
+// }
+
+// void merge_sort(int left, int right){
+//     if(right <= left)
+//         return;
+
+//     int m = (left + right) >> 1;
+//     merge_sort(left, m);
+//     merge_sort(m + 1, right);
+//     merge_sides(left, m, right);
+// }
+
+// int main(){
+//     std::cin >> n;
+
+//     for(int i = 0; i < n; ++i)
+//         std::cin >> v[i];
+
+//     merge_sort(0, n - 1);
+
+//     std::cout << cnt;
+// }
 
 // 5. Aranjare - ONI 2018
 // N elemente pe o stiva
@@ -193,116 +251,116 @@
 // Idee - le sortez unde prind si dupa fac hanoi
 
 // GETS TLE
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <set>
+// #include <iostream>
+// #include <fstream>
+// #include <vector>
+// #include <set>
 
-#define pii std::pair<int, int>
-const std::set<int> colset = {1, 2, 3};
+// #define pii std::pair<int, int>
+// const std::set<int> colset = {1, 2, 3};
 
-std::ifstream fin("farfurii.in");
-std::ofstream fout("farfurii.out");
+// std::ifstream fin("farfurii.in");
+// std::ofstream fout("farfurii.out");
 
-int cfinal;
-std::vector<int> C[4];
+// int cfinal;
+// std::vector<int> C[4];
 
-pii find_max(){
-    int pmax = 0;
-    for(int i = 1; i <= 3; ++i)
-        if(pmax == 0 || C[i].empty() || (!C[pmax].empty() && C[i].back() > C[pmax].back())){
-            pmax = i;
-            if(C[i].empty()) break;
-        }
+// pii find_max(){
+//     int pmax = 0;
+//     for(int i = 1; i <= 3; ++i)
+//         if(pmax == 0 || C[i].empty() || (!C[pmax].empty() && C[i].back() > C[pmax].back())){
+//             pmax = i;
+//             if(C[i].empty()) break;
+//         }
 
-    int p2 = 0;
-    for(int i = 1; i <= 3; ++i)
-        if(i != pmax && !C[i].empty() && (p2 == 0 || C[p2].back() < C[i].back()))
-            p2 = i;
+//     int p2 = 0;
+//     for(int i = 1; i <= 3; ++i)
+//         if(i != pmax && !C[i].empty() && (p2 == 0 || C[p2].back() < C[i].back()))
+//             p2 = i;
 
-    return {pmax, p2};
-}
+//     return {pmax, p2};
+// }
 
-bool sortat(const std::vector<int>& v){
-    for(int i = 0; i + 1 < (int)v.size(); ++i)
-        if(v[i] < v[i + 1])
-            return false;
-    return true;
-}
+// bool sortat(const std::vector<int>& v){
+//     for(int i = 0; i + 1 < (int)v.size(); ++i)
+//         if(v[i] < v[i + 1])
+//             return false;
+//     return true;
+// }
 
-void muta(int a, int b){
-    fout << a << ' ' << b << '\n';
-    C[b].push_back(C[a].back());
-    C[a].pop_back();
-}
+// void muta(int a, int b){
+//     fout << a << ' ' << b << '\n';
+//     C[b].push_back(C[a].back());
+//     C[a].pop_back();
+// }
 
-void hanoi(int k, int a, int b, int aux){
-    if(k <= 0) return;
-    hanoi(k - 1, a, aux, b);
-    muta(a, b);
-    hanoi(k - 1, aux, b, a);
-}
+// void hanoi(int k, int a, int b, int aux){
+//     if(k <= 0) return;
+//     hanoi(k - 1, a, aux, b);
+//     muta(a, b);
+//     hanoi(k - 1, aux, b, a);
+// }
 
-int cnt_top_leq(int d, int val){
-    int k = 0;
-    for(int i = (int)C[d].size() - 1; i >= 0; --i){
-        if(C[d][i] <= val) ++k;
-        else break;
-    }
-    return k;
-}
+// int cnt_top_leq(int d, int val){
+//     int k = 0;
+//     for(int i = (int)C[d].size() - 1; i >= 0; --i){
+//         if(C[d][i] <= val) ++k;
+//         else break;
+//     }
+//     return k;
+// }
 
-void uneste(int c1, int c2, int e){
-    int d = cfinal;
-    if(d != c1 && d != c2) d = c1;
-    int s = (d == c1 ? c2 : c1);
+// void uneste(int c1, int c2, int e){
+//     int d = cfinal;
+//     if(d != c1 && d != c2) d = c1;
+//     int s = (d == c1 ? c2 : c1);
 
-    while(!C[s].empty()){
-        int p = C[s].back();
-        int k = cnt_top_leq(d, p);
-        hanoi(k, d, e, s);
-        muta(s, d);
-        hanoi(k, e, d, s);
-    }
+//     while(!C[s].empty()){
+//         int p = C[s].back();
+//         int k = cnt_top_leq(d, p);
+//         hanoi(k, d, e, s);
+//         muta(s, d);
+//         hanoi(k, e, d, s);
+//     }
 
-    if(d != cfinal){
-        int aux = 6 - d - cfinal;
-        hanoi((int)C[d].size(), d, cfinal, aux);
-    }
-}
+//     if(d != cfinal){
+//         int aux = 6 - d - cfinal;
+//         hanoi((int)C[d].size(), d, cfinal, aux);
+//     }
+// }
 
-int main(){
-    for(int i = 1; i <= 3; ++i){
-        int nr; fin >> nr;
-        for(int x; nr--;){
-            fin >> x;
-            C[i].push_back(x);
-        }
-    }
-    fin >> cfinal;
+// int main(){
+//     for(int i = 1; i <= 3; ++i){
+//         int nr; fin >> nr;
+//         for(int x; nr--;){
+//             fin >> x;
+//             C[i].push_back(x);
+//         }
+//     }
+//     fin >> cfinal;
 
-    int x = 0, y = 0;
-    while(true){
-        auto p = find_max();
-        x = p.first;
-        y = p.second;
+//     int x = 0, y = 0;
+//     while(true){
+//         auto p = find_max();
+//         x = p.first;
+//         y = p.second;
 
-        if(C[x].empty()){
-            std::set<int> S = colset;
-            S.erase(x);
-            bool ok = true;
-            for(int el : S)
-                if(!sortat(C[el]))
-                    ok = false;
-            if(ok){
-                int a = *S.begin();
-                int b = *std::next(S.begin());
-                uneste(a, b, x);
-                break;
-            }
-        }
+//         if(C[x].empty()){
+//             std::set<int> S = colset;
+//             S.erase(x);
+//             bool ok = true;
+//             for(int el : S)
+//                 if(!sortat(C[el]))
+//                     ok = false;
+//             if(ok){
+//                 int a = *S.begin();
+//                 int b = *std::next(S.begin());
+//                 uneste(a, b, x);
+//                 break;
+//             }
+//         }
 
-        muta(y, x);
-    }
-    fout << "0 0\n";
-}
+//         muta(y, x);
+//     }
+//     fout << "0 0\n";
+// }
