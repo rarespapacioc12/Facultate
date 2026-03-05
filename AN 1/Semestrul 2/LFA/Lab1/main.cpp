@@ -40,14 +40,14 @@ std::ifstream fin("input_dfa.txt");
 std::ifstream cuvin("cuvinte.txt");
 std::ofstream fout("output.txt");
 
-typedef std::pair<char, int> pci;
+typedef std::pair<std::string, int> pci;
 
 const std::string lambda = "!";
 
 std::unordered_map<std::string, int> mp; // mapare pentru int ca sa fac graful mai usor as in starile sa fie puse de la 0 la nr_stari - 1
 std::vector<std::string> inv_mp;
 std::vector<std::vector<pci> > G; // graful
-std::unordered_set<char> alphabet;
+std::unordered_set<std::string> alphabet;
 std::unordered_set<int> final_states;
 std::string initial_state;
 
@@ -77,16 +77,25 @@ void read_alphabet(){
     std::string s;
     std::getline(fin, s);
 
-    for(int i = 0; i < (int)s.length(); i += 2){
-        alphabet.insert(s[i]);
+    int i = 0;
+    while(s[i]){
+        std::string symbol = "";
+        while(s[i] and s[i] != ' '){
+            symbol += s[i];
+            ++i;
+        }
+        alphabet.insert(symbol);
+        if(!s[i])
+            break;
+        ++i;
     }
+    fin.clear();
 }
 
 void read_function(){
     G.resize(counter);
     for(int i = 0; i < function_pairs; ++i){
-        std::string state1, state2;
-        char symbol;
+        std::string state1, state2, symbol;
         fin >> state1 >> symbol >> state2;
         G[mp[state1]].push_back({symbol, mp[state2]});
     }
@@ -128,17 +137,15 @@ void dfs(int curr_node, const std::string& word, int poz){
         return;
     }
     bool ok = false;
-    fout << word.substr(0, poz + 1) + ": ";
     for(auto [x, y] : G[curr_node]){
-        if(x == word[poz]){
+        if(x.length() + poz <= word.length() && x == word.substr(poz, x.length())){
             ok = true;
-            fout << "merg in " + inv_mp[y] + "\n";
-            dfs(y, word, poz + 1);
-            break;
+            fout << word.substr(0, poz + x.length()) + ": merg in " + inv_mp[y] + "\n";
+            dfs(y, word, poz + x.length());
         }
     }
     if(ok == false){
-        fout << "Cuvant respins!\n";
+        fout << word + ": Nu exista!\n Cuvant respins!\n";
         return;
     }
 }

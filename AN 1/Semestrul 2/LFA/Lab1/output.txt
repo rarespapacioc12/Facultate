@@ -1,24 +1,20 @@
-a: merg in q1
-aa: merg in q0
-Cuvant admis!
-b: merg in q2
-bb: merg in q3
-bbb: merg in q4
-Cuvant admis!
-a: merg in q1
-aa: merg in q0
-aaa: merg in q1
+aa: merg in q1
+Cuvant respins!
+aa: merg in q1
 aaaa: merg in q0
-aaaab: merg in q2
-aaaabb: merg in q3
-aaaabbb: merg in q4
-aaaabbbb: merg in q2
-aaaabbbbb: merg in q3
+Cuvant admis!
+bb: merg in q2
+bbb: Cuvant respins!
+bb: merg in q2
+bbbb: merg in q3
+bbbbbb: merg in q4
+Cuvant admis!
+aa: merg in q1
+aaaa: merg in q0
+aaaabb: merg in q2
+aaaabbbb: merg in q3
 aaaabbbbbb: merg in q4
 Cuvant admis!
-a: merg in q1
 ab: Cuvant respins!
-a: merg in q1
-aa: merg in q0
-aab: merg in q2
-Cuvant respins!
+aa: merg in q1
+aab: Cuvant respins!

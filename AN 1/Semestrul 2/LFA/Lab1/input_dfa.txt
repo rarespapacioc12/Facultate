@@ -1,11 +1,11 @@
 q0 q1 q2 q3 q4
-a b
+aa bb
 q0
 6
-q0 a q1
-q0 b q2
-q1 a q0
-q2 b q3
-q3 b q4
-q4 b q2
+q0 aa q1
+q0 bb q2
+q1 aa q0
+q2 bb q3
+q3 bb q4
+q4 bb q2
 q0 q4
