@@ -15,13 +15,14 @@
 //     std::cin >> n;
 
 //     v = new long long[n + 1];
+//     v[0] = 0;
 //     for(int i = 1; i <= n; ++i){
 //         std::cin >> v[i];
 //         v[i] += v[i - 1];
 //     }
-	
+
 //     std::cin >> q;
-    
+
 //     long long mx = LLONG_MIN;
 
 //     for(int l, r; q--;){
@@ -34,7 +35,7 @@
 //     std::cout << mx;
 // }
 
-// 5.1.2 Problem 2 - Two Sum II
+// 5.1.2 Problem 2 - Two Sum II - https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/submissions/1937719260/
 
 // #include <iostream>
 // #include <vector>
@@ -47,9 +48,9 @@
 //     v = new int[n];
 //     for(int i = 0; i < n; ++i)
 //         std::cin >> v[i];
-    
+
 //     int i = 0, j = n - 1;
-//     while(i <= j){
+//     while(i < j){
 //         if(v[i] + v[j] > target)
 //             --j;
 //         else if(v[i] + v[j] < target)
@@ -65,7 +66,10 @@
 
 // 5.1.3 Problem 3 - Search in Matrix II
 
-// Solutie O(n)
+// Solutie O(n) - https://leetcode.com/problems/search-a-2d-matrix-ii/submissions/1941150711/
+
+// Solutie ? - https://leetcode.com/problems/search-a-2d-matrix-ii/submissions/1937710075/
+// Deci solutia asta e bulanita pana sa ma prind cum se face legit. Prin comparatie, solutia legit O(n + m) intra in 40ms, O(nlogm) intra in 91ms si asta in 51ms=)))
 
 // #include <iostream>
 
@@ -77,11 +81,11 @@
 //     A = new int*[n];
 //     for(int i = 0; i < n; ++i)
 //         A[i] = new int[n];
-    
+
 //     for(int i = 0; i < n; ++i)
 //         for(int j = 0; j < n; ++j)
 //             std::cin >> A[i][j];
-    
+
 //     int i = n - 1, j = n - 1;
 //     while(i >= 0 and j >= 0){
 //         if(A[i][0] > x){
@@ -108,14 +112,16 @@
 
 // SAU
 
-// Solutie O(nlogn)
+// Solutie O(nlogn) - https://leetcode.com/problems/search-a-2d-matrix-ii/submissions/1937735876/
 
 // #include <iostream>
 
 // int n, x, **A;
 
 // int bs(int st, int dr, int* v, int target){
-//     if(st == dr){
+//    if(st > dr)
+//        return -1; 
+//    else if(st == dr){
 //         if(v[st] == target)
 //             return st;
 //         return -1;
@@ -137,11 +143,11 @@
 //     A = new int*[n];
 //     for(int i = 0; i < n; ++i)
 //         A[i] = new int[n];
-    
+
 //     for(int i = 0; i < n; ++i)
 //         for(int j = 0; j < n; ++j)
 //             std::cin >> A[i][j];
-    
+
 //     for(int i = 0; i < n; ++i){
 //         int t = bs(0, n - 1, A[i], x);
 //         if(t != -1){
@@ -221,39 +227,39 @@
 //     int size, capacity;
 // public:
 //     Vector(){
-//         v = nullptr;              
+//         v = nullptr;
 //         capacity = size = 0;
 //     }
 
 //     Vector(const int n){
-//         if (n <= 0) {             
+//         if (n <= 0) {
 //             v = nullptr;
 //             size = capacity = 0;
 //             return;
 //         }
 //         int t = get_msb(n);
-//         capacity = 1 << t;        
+//         capacity = 1 << t;
 //         v = new T[capacity];
 //         size = n;
 //     }
 
-//     void push_back(const T& el){  
+//     void push_back(const T& el){
 //         if(capacity == size){
 //             capacity = (capacity == 0 ? 1 : capacity << 1);
 
 //             T *new_v = new T[capacity];
-//             for(int i = 0; i < size; ++i) {   
+//             for(int i = 0; i < size; ++i) {
 //                 new_v[i] = v[i];
 //             }
 //             delete[] v;
 //             v = new_v;
 //         }
 
-//         v[size] = el;   
+//         v[size] = el;
 //         ++size;
 //     }
 
-//     void pop_back(){    
+//     void pop_back(){
 //         if(size == 0){
 //             std::cout << "Vector is empty!";
 //             return;
@@ -270,51 +276,75 @@
 // 5.2.2 Problem 2
 
 // #include <iostream>
-// #include <unordered_set>
 // #include <vector>
+// #include <unordered_map>
+// #include <unordered_set>
 // #include <random>
 
 // template<typename T>
-// class Structura{
-//     std::unordered_multiset<T> data;
-//     std::vector<T> v;
-//     int size;
-
-//     std::mt19937 rng; // generator
+// class Structura {
+//     std::vector<T> vals;
+//     std::unordered_map<T, std::unordered_set<int>> pos;
+//     std::mt19937 rng;
 
 // public:
-//     Structura()
-//         : size(0),
-//           rng(std::random_device{}()) // seed bun
-//     {}
+//     Structura() : rng(std::random_device{}()) {}
 
-//     void insert(T x){
-//         data.insert(x);
-//         v.push_back(x);
-//         ++size;
+//     void insert(const T& x) {
+//         vals.push_back(x);
+//         pos[x].insert((int)vals.size() - 1);
 //     }
 
-//     void pop(){
-//         if (size == 0) {
-//             std::cout << "Structura e goala!\n";
-//             return;
+//     bool remove(const T& x) {
+//         auto it = pos.find(x);
+//         if (it == pos.end() || it->second.empty()) {
+//             return false;
 //         }
 
-//         std::uniform_int_distribution<int> dist(0, size - 1);
+//         int idx = *it->second.begin();
+//         int lastIdx = (int)vals.size() - 1;
+//         T lastVal = vals[lastIdx];
 
-//         T t = v[dist(rng)];
-//         auto u = data.find(t);
-//         while(u == data.end()){
-//             t = v[dist(rng)];
-//             u = data.find(t);
+//         it->second.erase(idx);
+
+//         if (idx != lastIdx) {
+//             vals[idx] = lastVal;
+
+//             pos[lastVal].erase(lastIdx);
+//             pos[lastVal].insert(idx);
 //         }
 
-//         std::cout << t << '\n';
-//         data.erase(u);
+//         vals.pop_back();
+
+//         if (it->second.empty()) {
+//             pos.erase(it);
+//         }
+
+//         return true;
+//     }
+
+//     bool pop_random(T& out) {
+//         if (vals.empty()) {
+//             return false;
+//         }
+
+//         std::uniform_int_distribution<int> dist(0, (int)vals.size() - 1);
+//         int idx = dist(rng);
+//         out = vals[idx];
+//         remove(out);
+//         return true;
+//     }
+
+//     int size() const {
+//         return (int)vals.size();
+//     }
+
+//     bool empty() const {
+//         return vals.empty();
 //     }
 // };
 
-// int main(){
+// int main() {
 //     Structura<int> S;
 //     S.insert(3);
 //     S.insert(5);
@@ -323,8 +353,10 @@
 //     S.insert(5);
 //     S.insert(67);
 //     S.insert(42);
-//     S.pop();
-//     S.pop();
+
+//     int x;
+//     if (S.pop_random(x)) std::cout << x << '\n';
+//     if (S.pop_random(x)) std::cout << x << '\n';
 // }
 
 // 5.3.1 Problem 1 + 5.3.2 Problem 2
@@ -595,20 +627,26 @@
 
 // 5.4.2 Problem 2
 
+// Idee - ma folosesc de definita partii intregi pentru a incadra corect parte intreaga din radical din n.
+// Implementare cb simpla mai jos.
+
 // #include <iostream>
 
-// const double bulan = 1e-5;
+// unsigned n;
 
-// double n;
-
-// int main(){
+// int main() {
 //     std::cin >> n;
 
-//     double st = 0, dr = n;
+//     if(n <= 1) {
+//         std::cout << n;
+//         return 0;
+//     }
 
-//     while(dr - st >= bulan){
-//         double m = (st + dr) / 2;
-//         if(m * m > n)
+//     unsigned st = 0, dr = n;
+
+//     while(st + 1 < dr) {
+//         unsigned m = st + (dr - st) / 2;
+//         if (m > n / m)
 //             dr = m;
 //         else
 //             st = m;
@@ -616,6 +654,119 @@
 
 //     std::cout << st;
 // }
+
+// Implementare cb construit bit cu bit.
+
+// #include <iostream>
+
+// unsigned n;
+
+// int main() {
+//     std::cin >> n;
+
+//     if(n <= 1) {
+//         std::cout << n;
+//         return 0;
+//     }
+
+//     unsigned result = 0;
+//     unsigned bit = 1u << 30;
+
+//     while(bit > n) {
+//         bit >>= 2;
+//     }
+
+//     while(bit > 0) {
+//         if(n >= result + bit) {
+//             n -= result + bit;
+//             result = (result >> 1) + bit;
+//         } else {
+//             result >>= 1;
+//         }
+//         bit >>= 2;
+//     }
+
+//     std::cout << result;
+// }
+
+// Si acum ca sa testam viteza, le punem side by side pentru n = 10^7 numere.
+
+// #pragma GCC optimize("O3")
+// #pragma GCC target("avx2")
+// #pragma GCC optimize("unroll-loops")
+// #include <iostream>
+// #include <chrono>
+
+// unsigned n = 1e7;
+// unsigned sink = 0;
+
+// unsigned sqrt1(unsigned a){
+//     if(a <= 1) {
+//         return a;
+//     }
+
+//     unsigned st = 0, dr = a;
+
+//     while(st + 1 < dr) {
+//         unsigned m = st + (dr - st) / 2;
+//         if (m > a / m)
+//             dr = m;
+//         else
+//             st = m;
+//     }
+
+//     return st;
+// }
+
+// unsigned sqrt2(unsigned a){
+//     if(a <= 1) {
+//         return a;
+//     }
+
+//     unsigned result = 0;
+//     unsigned bit = 1u << 30;
+
+//     while(bit > a) {
+//         bit >>= 2;
+//     }
+
+//     while(bit > 0) {
+//         if(a >= result + bit) {
+//             a -= result + bit;
+//             result = (result >> 1) + bit;
+//         } else {
+//             result >>= 1;
+//         }
+//         bit >>= 2;
+//     }
+
+//     return result;
+// }
+
+// int main(){
+//     auto start = std::chrono::high_resolution_clock::now();
+//     for(unsigned i = 0; i <= n; ++i){
+//         sink += sqrt1(i);
+//     }
+//     auto end = std::chrono::high_resolution_clock::now();
+//     std::cout << "Cautare binara simpla: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
+//     // Pe 3 teste fara pragma: 923ms 931ms 924ms.
+//     // Pe 3 teste cu pragma: 715ms 677ms 671ms.
+
+//     start = std::chrono::high_resolution_clock::now();
+//     for(unsigned i = 0; i <= n; ++i){
+//         sink += sqrt2(i);
+//     }
+//     end = std::chrono::high_resolution_clock::now();
+//     std::cout << "Cautare binara bit cu bit: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
+//     // Pe 3 teste fara pragma: 414ms 417ms 421ms.
+//     // Pe 3 teste cu pragma: 150ms 146ms 146ms.
+
+//     return 0;
+// }
+
+// Observam ca a doua varianta este de 2 ori mai rapida decat prima fara pragma si de 4-5 ori cu pragma.
+// Asta se datoreaza faptului ca a doua varianta are mai putine iteratii, iar cu pragma, optimizarile suplimentare fac ca aceasta diferenta sa fie si mai evidenta.
 
 // 5.5.1 Problem 1 - LRU Cache
 
@@ -629,33 +780,33 @@
 
 // int findDuplicate(const vector<int>& v) {
 //     int slow = v[0], fast = v[v[0]];
-    
+
 //     while(slow != fast){
 //         slow = v[slow];
 //         fast = v[v[fast]];
 //     }
-    
+
 //     slow = 0;
-    
+
 //     while(slow != fast){
 //         slow = v[slow];
 //         fast = v[fast];
 //     }
-    
+
 //     return slow;
 // }
 
 // int main() {
 //     int N;
 //     cin >> N;
-    
+
 //     vector<int> v;
 //     for (int i = 0; i <= N; ++i) {
 //         int val;
 //         cin >> val;
 //         v.push_back(val);
 //     }
-    
+
 //     cout << findDuplicate(v) << "\n";
 //     return 0;
 // }
