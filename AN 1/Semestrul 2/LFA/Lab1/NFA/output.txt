@@ -1,10 +1,7 @@
-aa: merg in q1
-aa: Cuvant respins!
+Cuvant respins!
 aa: merg in q1
 aaaa: merg in q0
 aaaa: Cuvant admis!
-bb: merg in q2
-bbb: Nu exista tranzitii!
 Cuvant respins!
 bb: merg in q2
 bbbb: merg in q3
@@ -16,8 +13,6 @@ aaaabb: merg in q2
 aaaabbbb: merg in q3
 aaaabbbbbb: merg in q4
 aaaabbbbbb: Cuvant admis!
-ab: Nu exista tranzitii!
+: Nu exista tranzitii!
 Cuvant respins!
-aa: merg in q1
-aab: Nu exista tranzitii!
 Cuvant respins!
