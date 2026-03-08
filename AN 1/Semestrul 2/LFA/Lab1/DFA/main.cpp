@@ -42,11 +42,9 @@ std::ofstream fout("output.txt");
 
 typedef std::pair<std::string, int> pci;
 
-const std::string lambda = "!";
-
-std::unordered_map<std::string, int> mp; // mapare pentru int ca sa fac graful mai usor as in starile sa fie puse de la 0 la nr_stari - 1
+std::unordered_map<std::string, int> mp;
 std::vector<std::string> inv_mp;
-std::vector<std::vector<pci> > G; // graful
+std::vector<std::vector<pci> > G;
 std::unordered_set<std::string> alphabet;
 std::unordered_set<int> final_states;
 std::string initial_state;
@@ -58,19 +56,20 @@ void read_states(){
     std::getline(fin, s);
 
     int i = 0;
-    while(s[i]){
+    while(i < (int)s.size()){
         std::string stare = "";
-        while(s[i] and s[i] != ' '){
+        while(i < (int)s.size() && s[i] != ' '){
             stare += s[i];
             ++i;
         }
-        inv_mp.push_back(stare);
-        mp[stare] = counter++;
-        if(!s[i])
-            break;
-        ++i;
+        if(!stare.empty()){
+            inv_mp.push_back(stare);
+            mp[stare] = counter++;
+        }
+        while(i < (int)s.size() && s[i] == ' '){
+            ++i;
+        }
     }
-    fin.clear();
 }
 
 void read_alphabet(){
@@ -78,18 +77,19 @@ void read_alphabet(){
     std::getline(fin, s);
 
     int i = 0;
-    while(s[i]){
+    while(i < (int)s.size()){
         std::string symbol = "";
-        while(s[i] and s[i] != ' '){
+        while(i < (int)s.size() && s[i] != ' '){
             symbol += s[i];
             ++i;
         }
-        alphabet.insert(symbol);
-        if(!s[i])
-            break;
-        ++i;
+        if(!symbol.empty()){
+            alphabet.insert(symbol);
+        }
+        while(i < (int)s.size() && s[i] == ' '){
+            ++i;
+        }
     }
-    fin.clear();
 }
 
 void read_function(){
@@ -117,44 +117,52 @@ void read_input(){
     read_final_states();
 }
 
-void dfs(int curr_node, const std::string& word, int poz){
-    if(word == lambda){
-        if(final_states.find(mp[initial_state]) == final_states.end()){
-            fout << "Lambda: Cuvant respins!\n";
+bool parse_word(const std::string& word, std::vector<std::string>& path){
+    int curr_node = mp[initial_state];
+    int poz = 0;
+
+    while(poz < (int)word.length()){
+        bool found = false;
+
+        for(auto [x, y] : G[curr_node]){
+            if(poz + (int)x.length() <= (int)word.length() && x == word.substr(poz, x.length())){
+                path.push_back(word.substr(0, poz + x.length()) + ": merg in " + inv_mp[y] + "\n");
+                curr_node = y;
+                poz += x.length();
+                found = true;
+                break;
+            }
         }
-        else{
-            fout << "Lambda: Cuvant admis!\n";
-        }
-        return;
-    }
-    if(poz == (int)word.length()){
-        if(final_states.find(curr_node) == final_states.end()){
-            fout << "Cuvant respins!\n";
-        }
-        else{
-            fout << "Cuvant admis!\n";
-        }
-        return;
-    }
-    bool ok = false;
-    for(auto [x, y] : G[curr_node]){
-        if(x.length() + poz <= word.length() && x == word.substr(poz, x.length())){
-            ok = true;
-            fout << word.substr(0, poz + x.length()) + ": merg in " + inv_mp[y] + "\n";
-            dfs(y, word, poz + x.length());
+
+        if(found == false){
+            path.push_back(word.substr(0, poz) + ": Nu exista tranzitii!\n");
+            return false;
         }
     }
-    if(ok == false){
-        fout << word + ": Nu exista!\n Cuvant respins!\n";
-        return;
+
+    if(final_states.find(curr_node) != final_states.end()){
+        path.push_back(word + ": Cuvant admis!\n");
+        return true;
     }
+
+    path.push_back(word + ": Cuvant respins!\n");
+    return false;
 }
 
 int main(){
     read_input();
     std::string word;
+
     while(std::getline(cuvin, word)){
-        cuvin.clear();
-        dfs(mp[initial_state], word, 0);
+        if(word.empty()){
+            continue;
+        }
+
+        std::vector<std::string> path;
+        parse_word(word, path);
+
+        for(const auto& s : path){
+            fout << s;
+        }
     }
 }
