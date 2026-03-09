@@ -76,6 +76,11 @@ public:
         return out;
     }
 
+    friend std::istream& operator>>(std::istream& in, FructClass& other){
+        in >> other.nume >> other.gramaj;
+        return in;
+    }
+
     void print_info(){
         std::cout << this->nume << " " << this->gramaj << "\n";
     }
@@ -88,10 +93,12 @@ public:
 int main(){
     FructClass fructClass("mar", 105);
     FructClass fructClass1, fructClass2(fructClass);
-    FructClass fructClass3;
+    FructClass fructClass3, fructClass4;
 
     fructClass3 = fructClass;
     fructClass3.operator=(fructClass);
 
     std::cout << fructClass2 << fructClass3;
+    std::cin >> fructClass4;
+    std::cout << fructClass4;
 }
