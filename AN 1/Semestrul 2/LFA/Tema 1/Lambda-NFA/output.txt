@@ -1,0 +1,48 @@
+: {q0, q1, q2}
+a: {q3, q4}
+aa: {q3, q4}
+aaa: {q3, q4}
+aaaa: {q3, q4}
+aaaaa: {q3, q4}
+aaaaaa: {q3, q4}
+aaaaaaa: {q3, q4}
+aaaaaaaa: {q3, q4}
+aaaaaaaaa: {q3, q4}
+aaaaaaaaaa: {q3, q4}
+aaaaaaaaaa: Cuvant respins!
+: {q0, q1, q2}
+a: {q3, q4}
+ab: {q5}
+abb: {q5}
+abb: Cuvant admis!
+: {q0, q1, q2}
+a: {q3, q4}
+ab: {q5}
+ab: Nu exista tranzitii!
+abc: Cuvant respins!
+: {q0, q1, q2}
+a: {q3, q4}
+aa: {q3, q4}
+aaa: {q3, q4}
+aaaa: {q3, q4}
+aaaab: {q5}
+aaaabb: {q5}
+aaaabbb: {q5}
+aaaabbbb: {q5}
+aaaabbbbb: {q5}
+aaaabbbbbb: {q5}
+aaaabbbbbb: Cuvant admis!
+: {q0, q1, q2}
+a: {q3, q4}
+aa: {q3, q4}
+aaa: {q3, q4}
+aaaa: {q3, q4}
+aaaab: {q5}
+aaaabb: {q5}
+aaaabbb: {q5}
+aaaabbbb: {q5}
+aaaabbbbb: {q5}
+aaaabbbbbb: {q5}
+aaaabbbbbbb: {q5}
+aaaabbbbbbbb: {q5}
+aaaabbbbbbbb: Cuvant admis!
