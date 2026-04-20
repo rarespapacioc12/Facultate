@@ -11,7 +11,7 @@ private:
     int count;
     std::vector<std::list<std::string> > H;
 
-    int hashFunction(const std::string& s, int modulo){
+    int hashFunction(const std::string& s, int modulo){ // the hashing function runs in O(len(s)) time, minimum possible
         int value = 0, n = s.length();
         
         for(int i = 0; i < n; ++i){

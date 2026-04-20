@@ -5,7 +5,6 @@ algorithm.
 */
 
 /* Idea:
-Generalizing the idea from Problem 3.2.2, I want to do the following check:
 - check that there are exactly r - l + 1 distinct values in interval [l...r]
 - check that the interval has the number 0 in it and the maximum is r - l
 However, this solution has a complexity of O(nlogn + q) because I am forced to use a RMQ
@@ -88,5 +87,69 @@ int main(){
         fout << (max_query(l, r) == r - l && 
         (has_zero[r] - (l == 0 ? 0 : has_zero[l - 1]) == 1) &&
         max_prev[r] < l) << '\n';
+    }
+}
+
+/* O(n + q) solution, discussed in lab
+fie b_i = h(a_i)
+functia h alege un random din [0, 10^18]
+s = xor de la i = l pana la r din b_i
+s2 = xor de la i = 0 pana la r - l din h(i)
+daca s = s2:
+    da
+altfel:
+    nu
+*/
+
+#include <fstream>
+#include <vector>
+#include <random>
+#include <unordered_map>
+
+std::ifstream fin("input.txt");
+std::ofstream fout("output.txt");
+
+const int64_t talent = 1e18;
+
+std::random_device rd;
+std::mt19937_64 gen(rd());
+std::uniform_int_distribution<int64_t> numar(0, talent);
+
+int n, q;
+std::vector<int64_t> v;
+std::unordered_map<int64_t, int64_t> H;
+std::vector<int64_t> prefix_sum_v, prefix_sum_interval;
+
+int main(){
+    fin >> n >> q;
+
+    v.resize(n);
+    prefix_sum_v.resize(n);
+    prefix_sum_interval.resize(n);
+
+    for(auto& x : v){
+        fin >> x;
+    }
+
+    for(int64_t i = 0; i < n; ++i){
+        if(H.find(i) == H.end()){
+            H[i] = numar(gen);
+        }
+        if(H.find(v[i]) == H.end()){
+            H[v[i]] = numar(gen);
+        }
+        if(i == 0){
+            prefix_sum_v[i] = H[v[i]];
+            prefix_sum_interval[i] = H[i];
+        }
+        else{
+            prefix_sum_v[i] = prefix_sum_v[i - 1] ^ H[v[i]];
+            prefix_sum_interval[i] = prefix_sum_interval[i - 1] ^ H[i];
+        }
+    }
+
+    for(int l, r; q--;){
+        fin >> l >> r;
+        fout << (prefix_sum_interval[r - l] == (prefix_sum_v[r] ^ (l == 0 ? 0 : prefix_sum_v[l - 1]))) << '\n';
     }
 }
