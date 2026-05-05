@@ -1,0 +1,415 @@
+-- NUME SI PRENUME: Papacioc Rareș-Ioan
+-- GRUPA: 152
+-- TITLU PROIECT: Gestiunea activității unui partid politic
+
+
+-- SCRIPT CREATE
+
+CREATE TABLE FILIALA(
+    cod_filiala NUMBER(5) PRIMARY KEY,
+    denumire VARCHAR2(50) NOT NULL,
+    data_infiintare DATE NOT NULL,
+    cod_localizare NUMBER(5) NOT NULL,
+    cod_info_contact NUMBER(5) NOT NULL
+);
+
+CREATE TABLE SEDIU_CENTRAL(
+    cod_sediu NUMBER(5) PRIMARY KEY,
+    nume_cladire VARCHAR2(50) NOT NULL,
+    cod_filiala NUMBER(5) NOT NULL
+);
+
+CREATE TABLE MEMBRU(
+    cod_membru NUMBER(5) PRIMARY KEY,
+    nume VARCHAR2(30) NOT NULL,
+    prenume VARCHAR2(30) NOT NULL,
+    data_aderare DATE NOT NULL,
+    status VARCHAR2(20) NOT NULL,
+    cod_filiala NUMBER(5) NOT NULL,
+    cod_localizare NUMBER(5) NOT NULL,
+    cod_info_contact NUMBER(5) NOT NULL
+);
+
+CREATE TABLE CAMPANIE(
+    cod_campanie NUMBER(5) PRIMARY KEY,
+    titlu VARCHAR2(100),
+    buget_estimat NUMBER(12,2) NOT NULL,
+    data_start DATE NOT NULL,
+    data_final DATE NOT NULL
+);
+
+CREATE TABLE ALEGERI(
+    cod_alegeri NUMBER(5) PRIMARY KEY,
+    denumire VARCHAR2(50),
+    tip VARCHAR2(30) NOT NULL,
+    an NUMBER(4) NOT NULL
+);
+
+CREATE TABLE FUNCTIE_ELECTORALA(
+    cod_functie NUMBER(5) PRIMARY KEY,
+    denumire_functie VARCHAR2(50) NOT NULL,
+    indemnizatie_recomandata NUMBER(10, 2)
+);
+
+CREATE TABLE DONATOR(
+    cod_donator NUMBER(5) PRIMARY KEY,
+    nume_donator VARCHAR2(50) NOT NULL,
+    tip VARCHAR2(20) NOT NULL,
+    cod_localizare NUMBER(5) NOT NULL,
+    cod_info_contact NUMBER(5) NOT NULL
+);
+
+CREATE TABLE LOCALIZARE(
+    cod_localizare NUMBER(5) PRIMARY KEY,
+    adresa VARCHAR2(100) NOT NULL,
+    oras VARCHAR2(50) NOT NULL,
+    judet VARCHAR2(50) NOT NULL,
+    tara VARCHAR2(30) DEFAULT 'Romania'
+);
+
+CREATE TABLE INFO_CONTACT(
+    cod_info_contact NUMBER(5) PRIMARY KEY,
+    telefon VARCHAR2(15) NOT NULL,
+    mail VARCHAR2(50) NOT NULL,
+    fax VARCHAR2(15)
+);
+
+CREATE TABLE CATEGORIE_SPECIALA(
+    cod_categorie NUMBER(5) PRIMARY KEY,
+    nume_categorie VARCHAR2(20) NOT NULL
+);
+
+CREATE TABLE CANDIDAT(
+    cod_membru NUMBER(5) PRIMARY KEY,
+    functie_vizata VARCHAR2(50) NOT NULL,
+    experienta_politica_ani NUMBER(2) NOT NULL
+); 
+
+CREATE TABLE COTIZATIE(
+    cod_membru NUMBER(5),
+    nr_chitanta NUMBER(10),
+    data_plata DATE NOT NULL,
+    suma_plata NUMBER(10, 2) NOT NULL,
+    CONSTRAINT pk_cotizatie PRIMARY KEY(cod_membru, nr_chitanta)
+);
+
+CREATE TABLE DONATIE(
+    cod_donator NUMBER(5),
+    cod_donatie NUMBER(10),
+    suma NUMBER(15, 2) NOT NULL,
+    data_donatie DATE NOT NULL,
+    cod_ordin_plata VARCHAR2(20) NOT NULL,
+    CONSTRAINT pk_donatie PRIMARY KEY(cod_donator, cod_donatie)
+);
+
+CREATE TABLE PARTICIPA(
+    cod_campanie NUMBER(5),
+    cod_membru NUMBER(5),
+    data_inscriere DATE NOT NULL,
+    ore_implicare NUMBER(3) NOT NULL,
+    CONSTRAINT pk_participa PRIMARY KEY(cod_campanie, cod_membru)
+);
+
+CREATE TABLE APARTINE(
+    cod_membru NUMBER(5),
+    cod_categorie NUMBER(5),
+    data_inscriere DATE NOT NULL,
+    beneficii VARCHAR2(100),
+    CONSTRAINT pk_apartine PRIMARY KEY(cod_membru, cod_categorie)
+);
+
+CREATE TABLE CANDIDATURA(
+    cod_membru NUMBER(5),
+    cod_alegeri NUMBER(5),
+    cod_functie NUMBER(5),
+    buget NUMBER(10, 2) NOT NULL,
+    CONSTRAINT pk_candidatura PRIMARY KEY(cod_membru, cod_alegeri, cod_functie)
+);
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT fk_localizare_membru
+FOREIGN KEY (cod_localizare)
+REFERENCES LOCALIZARE(cod_localizare);
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT fk_info_contact_membru
+FOREIGN KEY (cod_info_contact)
+REFERENCES INFO_CONTACT(cod_info_contact);
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT fk_filiala_membru
+FOREIGN KEY (cod_filiala)
+REFERENCES FILIALA(cod_filiala);
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT set_status_membru
+CHECK (status IN ('Activ', 'Suspendat', 'Retras'));
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT uq_localizare_membru
+UNIQUE(cod_localizare);
+
+ALTER TABLE MEMBRU
+ADD CONSTRAINT uq_info_contact_membru
+UNIQUE(cod_info_contact);
+
+ALTER TABLE FILIALA
+ADD CONSTRAINT fk_localizare_filiala
+FOREIGN KEY (cod_localizare)
+REFERENCES LOCALIZARE(cod_localizare);
+
+ALTER TABLE FILIALA
+ADD CONSTRAINT fk_info_contact_filiala
+FOREIGN KEY (cod_info_contact)
+REFERENCES INFO_CONTACT(cod_info_contact);
+
+ALTER TABLE FILIALA
+ADD CONSTRAINT uq_localizare_filiala
+UNIQUE(cod_localizare);
+
+ALTER TABLE FILIALA
+ADD CONSTRAINT uq_info_contact_filiala
+UNIQUE(cod_info_contact);
+
+ALTER TABLE SEDIU_CENTRAL
+ADD CONSTRAINT fk_filiala_sediu_central
+FOREIGN KEY (cod_filiala)
+REFERENCES FILIALA(cod_filiala);
+
+ALTER TABLE DONATOR
+ADD CONSTRAINT fk_localizare_donator
+FOREIGN KEY (cod_localizare)
+REFERENCES LOCALIZARE(cod_localizare);
+
+ALTER TABLE DONATOR
+ADD CONSTRAINT fk_info_contact_donator
+FOREIGN KEY (cod_info_contact)
+REFERENCES INFO_CONTACT(cod_info_contact);
+
+ALTER TABLE DONATOR
+ADD CONSTRAINT set_tip_donator
+CHECK(tip IN ('Fizic', 'Juridic'));
+
+ALTER TABLE DONATOR
+ADD CONSTRAINT uq_localizare_donator
+UNIQUE(cod_localizare);
+
+ALTER TABLE DONATOR
+ADD CONSTRAINT uq_info_contact_donator
+UNIQUE(cod_info_contact);
+
+ALTER TABLE DONATIE
+ADD CONSTRAINT fk_donator_donatie
+FOREIGN KEY (cod_donator)
+REFERENCES DONATOR(cod_donator);
+
+ALTER TABLE CANDIDATURA
+ADD CONSTRAINT fk_functie_electorala_candidatura
+FOREIGN KEY (cod_functie)
+REFERENCES FUNCTIE_ELECTORALA(cod_functie);
+
+ALTER TABLE CANDIDATURA
+ADD CONSTRAINT fk_alegeri_candidatura
+FOREIGN KEY (cod_alegeri)
+REFERENCES ALEGERI(cod_alegeri);
+
+ALTER TABLE CANDIDATURA
+ADD CONSTRAINT fk_candidat_candidatura
+FOREIGN KEY (cod_membru)
+REFERENCES CANDIDAT(cod_membru);
+
+ALTER TABLE APARTINE
+ADD CONSTRAINT fk_membru_apartine
+FOREIGN KEY (cod_membru)
+REFERENCES MEMBRU(cod_membru);
+
+ALTER TABLE APARTINE
+ADD CONSTRAINT fk_categorie_speciala_apartine
+FOREIGN KEY (cod_categorie)
+REFERENCES CATEGORIE_SPECIALA(cod_categorie);
+
+ALTER TABLE COTIZATIE
+ADD CONSTRAINT fk_membru_cotizatie
+FOREIGN KEY (cod_membru)
+REFERENCES MEMBRU(cod_membru);
+
+ALTER TABLE PARTICIPA
+ADD CONSTRAINT fk_membru_participa
+FOREIGN KEY (cod_membru)
+REFERENCES MEMBRU(cod_membru);
+
+ALTER TABLE PARTICIPA
+ADD CONSTRAINT fk_campanie_participa
+FOREIGN KEY (cod_campanie)
+REFERENCES CAMPANIE(cod_campanie);
+
+ALTER TABLE CANDIDAT
+ADD CONSTRAINT fk_membru_candidat
+FOREIGN KEY (cod_membru)
+REFERENCES MEMBRU(cod_membru);
+
+ALTER TABLE CANDIDAT
+ADD CONSTRAINT verif_experienta_candidat
+CHECK(experienta_politica_ani > 0);
+
+ALTER TABLE ALEGERI
+ADD CONSTRAINT set_tip_alegeri
+CHECK(tip in ('Locale', 'Parlamentare', 'Prezidentiale',
+'Europarlamentare', 'Speciale'));
+
+ALTER TABLE CAMPANIE
+ADD CONSTRAINT date_valide
+CHECK(data_start < data_final);
+
+-- SCRIPT INSERT
+
+INSERT INTO LOCALIZARE VALUES (1, 'Str. Victoriei 10', 'Bucuresti', 'Bucuresti', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (2, 'Bd. Eroilor 25', 'Cluj-Napoca', 'Cluj', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (3, 'Str. Lapusneanu 15', 'Iasi', 'Iasi', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (4, 'Str. Republicii 8', 'Brasov', 'Brasov', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (5, 'Calea Aradului 12', 'Timisoara', 'Timis', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (6, 'Str. Mihai Bravu 45', 'Bucuresti', 'Bucuresti', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (7, 'Str. Napoca 18', 'Cluj-Napoca', 'Cluj', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (8, 'Bd. Stefan cel Mare 30', 'Iasi', 'Iasi', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (9, 'Str. Lunga 55', 'Brasov', 'Brasov', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (10, 'Str. Alba Iulia 20', 'Timisoara', 'Timis', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (11, 'Bd. Unirii 100', 'Bucuresti', 'Bucuresti', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (12, 'Str. Memorandumului 5', 'Cluj-Napoca', 'Cluj', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (13, 'Str. Palat 3', 'Iasi', 'Iasi', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (14, 'Str. Muresenilor 12', 'Brasov', 'Brasov', DEFAULT);
+INSERT INTO LOCALIZARE VALUES (15, 'Str. Mercy 7', 'Timisoara', 'Timis', DEFAULT);
+
+INSERT INTO INFO_CONTACT VALUES (1, '0210000001', 'filiala.bucuresti@partid.ro', '0210000011');
+INSERT INTO INFO_CONTACT VALUES (2, '0260000001', 'filiala.cluj@partid.ro', '0260000011');
+INSERT INTO INFO_CONTACT VALUES (3, '0230000001', 'filiala.iasi@partid.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (4, '0268000001', 'filiala.brasov@partid.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (5, '0256000001', 'filiala.timisoara@partid.ro', '0256000011');
+INSERT INTO INFO_CONTACT VALUES (6, '0721000001', 'ion.popescu@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (7, '0732000002', 'maria.ionescu@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (8, '0743000003', 'andrei.popa@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (9, '0754000004', 'elena.dumitrescu@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (10, '0765000005', 'mihai.georgescu@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (11, '0210000100', 'office@constructsrl.ro', '0210000101');
+INSERT INTO INFO_CONTACT VALUES (12, '0721500001', 'gheorghe.marin@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (13, '0310000100', 'office@digitalsol.ro', '0310000101');
+INSERT INTO INFO_CONTACT VALUES (14, '0741500002', 'ana.radu@email.ro', NULL);
+INSERT INTO INFO_CONTACT VALUES (15, '0256000100', 'office@transportrapid.ro', '0256000101');
+
+INSERT INTO FILIALA VALUES (1, 'Filiala Bucuresti',
+TO_DATE('2005-03-15', 'YYYY-MM-DD'), 1, 1);
+INSERT INTO FILIALA VALUES (2, 'Filiala Cluj', 
+TO_DATE('2006-07-20', 'YYYY-MM-DD'), 2, 2);
+INSERT INTO FILIALA VALUES (3, 'Filiala Iasi', 
+TO_DATE('2007-01-10', 'YYYY-MM-DD'), 3, 3);
+INSERT INTO FILIALA VALUES (4, 'Filiala Brasov', 
+TO_DATE('2008-09-05', 'YYYY-MM-DD'), 4, 4);
+INSERT INTO FILIALA VALUES (5, 'Filiala Timisoara', 
+TO_DATE('2009-11-22', 'YYYY-MM-DD'), 5, 5);
+
+INSERT INTO SEDIU_CENTRAL VALUES (1, 'Palatul Administrativ', 1);
+INSERT INTO SEDIU_CENTRAL VALUES (2, 'Casa Partidului Cluj', 2);
+INSERT INTO SEDIU_CENTRAL VALUES (3, 'Centrul Civic Iasi', 3);
+INSERT INTO SEDIU_CENTRAL VALUES (4, 'Vila Republicii', 4);
+INSERT INTO SEDIU_CENTRAL VALUES (5, 'Cladirea Vest', 5);
+
+INSERT INTO MEMBRU VALUES (1, 'Popescu', 'Ion', 
+TO_DATE('2010-05-01', 'YYYY-MM-DD'), 'Activ', 1, 6, 6);
+INSERT INTO MEMBRU VALUES (2, 'Ionescu', 'Maria', 
+TO_DATE('2011-09-15', 'YYYY-MM-DD'), 'Activ', 2, 7, 7);
+INSERT INTO MEMBRU VALUES (3, 'Popa', 'Andrei', 
+TO_DATE('2012-03-20', 'YYYY-MM-DD'), 'Suspendat', 3, 8, 8);
+INSERT INTO MEMBRU VALUES (4, 'Dumitrescu', 'Elena', 
+TO_DATE('2013-06-10', 'YYYY-MM-DD'), 'Activ', 4, 9, 9);
+INSERT INTO MEMBRU VALUES (5, 'Georgescu', 'Mihai',
+TO_DATE('2014-01-25', 'YYYY-MM-DD'), 'Retras', 5, 10, 10);
+
+INSERT INTO CANDIDAT VALUES (1, 'Primar', 5);
+INSERT INTO CANDIDAT VALUES (2, 'Consilier Local', 3);
+INSERT INTO CANDIDAT VALUES (3, 'Deputat', 8);
+INSERT INTO CANDIDAT VALUES (4, 'Senator', 6);
+INSERT INTO CANDIDAT VALUES (5, 'Europarlamentar', 10);
+
+INSERT INTO CAMPANIE VALUES (1, 'Campania pentru Locale 2024', 500000.00, 
+TO_DATE('2024-03-01', 'YYYY-MM-DD'), TO_DATE('2024-06-01', 'YYYY-MM-DD'));
+INSERT INTO CAMPANIE VALUES (2, 'Campania Nationala Parlamentare', 1200000.00,
+TO_DATE('2024-07-01', 'YYYY-MM-DD'), TO_DATE('2024-12-01', 'YYYY-MM-DD'));
+INSERT INTO CAMPANIE VALUES (3, 'Campania Strangere Fonduri', 50000.00, 
+TO_DATE('2023-01-15', 'YYYY-MM-DD'), TO_DATE('2023-06-15', 'YYYY-MM-DD'));
+INSERT INTO CAMPANIE VALUES (4, 'Campania Tineret Activ', 80000.00, 
+TO_DATE('2023-09-01', 'YYYY-MM-DD'), TO_DATE('2024-02-01', 'YYYY-MM-DD'));
+INSERT INTO CAMPANIE VALUES (5, 'Campania Mediu Curat', 150000.00, 
+TO_DATE('2024-04-01', 'YYYY-MM-DD'), TO_DATE('2024-10-01', 'YYYY-MM-DD'));
+
+INSERT INTO ALEGERI VALUES (1, 'Alegeri Locale 2024', 
+'Locale', 2024);
+INSERT INTO ALEGERI VALUES (2, 'Alegeri Parlamentare 2024', 
+'Parlamentare', 2024);
+INSERT INTO ALEGERI VALUES (3, 'Alegeri Prezidentiale 2024', 
+'Prezidentiale', 2024);
+INSERT INTO ALEGERI VALUES (4, 'Alegeri Europarlamentare 2024', 
+'Europarlamentare', 2024);
+INSERT INTO ALEGERI VALUES (5, 'Alegeri Locale Partiale 2023', 
+'Speciale', 2023);
+
+INSERT INTO FUNCTIE_ELECTORALA VALUES (1, 'Primar', 5000.00);
+INSERT INTO FUNCTIE_ELECTORALA VALUES (2, 'Consilier Local', 2500.00);
+INSERT INTO FUNCTIE_ELECTORALA VALUES (3, 'Deputat', 8000.00);
+INSERT INTO FUNCTIE_ELECTORALA VALUES (4, 'Senator', 9000.00);
+INSERT INTO FUNCTIE_ELECTORALA VALUES (5, 'Europarlamentar', 12000.00);
+
+INSERT INTO CATEGORIE_SPECIALA VALUES (1, 'Organizatia Tineret');
+INSERT INTO CATEGORIE_SPECIALA VALUES (2, 'Organizatia Femei');
+INSERT INTO CATEGORIE_SPECIALA VALUES (3, 'Organizatia Seniori');
+INSERT INTO CATEGORIE_SPECIALA VALUES (4, 'Comisia de Etica');
+INSERT INTO CATEGORIE_SPECIALA VALUES (5, 'Departament Juridic');
+
+INSERT INTO DONATOR VALUES (1, 'SC Construct SRL', 'Juridic', 11, 11);
+INSERT INTO DONATOR VALUES (2, 'Gheorghe Marin', 'Fizic', 12, 12);
+INSERT INTO DONATOR VALUES (3, 'SC Digital Solutions SRL', 'Juridic', 13, 13);
+INSERT INTO DONATOR VALUES (4, 'Ana Radu', 'Fizic', 14, 14);
+INSERT INTO DONATOR VALUES (5, 'SC Transport Rapid SRL', 'Juridic', 15, 15);
+
+INSERT INTO COTIZATIE VALUES (1, 1001, TO_DATE('2024-01-15', 'YYYY-MM-DD'), 150.00);
+INSERT INTO COTIZATIE VALUES (2, 1002, TO_DATE('2024-02-10', 'YYYY-MM-DD'), 150.00);
+INSERT INTO COTIZATIE VALUES (3, 1003, TO_DATE('2024-03-05', 'YYYY-MM-DD'), 100.00);
+INSERT INTO COTIZATIE VALUES (4, 1004, TO_DATE('2024-01-20', 'YYYY-MM-DD'), 200.00);
+INSERT INTO COTIZATIE VALUES (5, 1005, TO_DATE('2024-04-01', 'YYYY-MM-DD'), 150.00);
+
+INSERT INTO DONATIE VALUES (1, 1, 25000.00, 
+TO_DATE('2024-02-10', 'YYYY-MM-DD'), 'OP-2024-001');
+INSERT INTO DONATIE VALUES (2, 1, 5000.00, 
+TO_DATE('2024-03-15', 'YYYY-MM-DD'), 'OP-2024-002');
+INSERT INTO DONATIE VALUES (3, 1, 15000.00, 
+TO_DATE('2024-04-20', 'YYYY-MM-DD'), 'OP-2024-003');
+INSERT INTO DONATIE VALUES (4, 1, 3000.00, 
+TO_DATE('2024-05-10', 'YYYY-MM-DD'), 'OP-2024-004');
+INSERT INTO DONATIE VALUES (5, 1, 40000.00, 
+TO_DATE('2024-01-05', 'YYYY-MM-DD'), 'OP-2024-005');
+
+INSERT INTO PARTICIPA VALUES (1, 1, 
+TO_DATE('2024-03-05', 'YYYY-MM-DD'), 120);
+INSERT INTO PARTICIPA VALUES (1, 2, 
+TO_DATE('2024-03-10', 'YYYY-MM-DD'), 80);
+INSERT INTO PARTICIPA VALUES (2, 3, 
+TO_DATE('2024-07-05', 'YYYY-MM-DD'), 200);
+INSERT INTO PARTICIPA VALUES (3, 4, 
+TO_DATE('2023-02-01', 'YYYY-MM-DD'), 50);
+INSERT INTO PARTICIPA VALUES (5, 5, 
+TO_DATE('2024-04-15', 'YYYY-MM-DD'), 90);
+
+INSERT INTO APARTINE VALUES (1, 4, 
+TO_DATE('2015-01-10', 'YYYY-MM-DD'), NULL);
+INSERT INTO APARTINE VALUES (2, 2, 
+TO_DATE('2016-03-15', 'YYYY-MM-DD'), 'Acces conferinte');
+INSERT INTO APARTINE VALUES (3, 5, 
+TO_DATE('2017-06-20', 'YYYY-MM-DD'), 'Consultanta juridica');
+INSERT INTO APARTINE VALUES (4, 1, 
+TO_DATE('2018-09-01', 'YYYY-MM-DD'), 'Tabere gratuite');
+INSERT INTO APARTINE VALUES (5, 3, 
+TO_DATE('2019-11-10', 'YYYY-MM-DD'), 'Excursii organizate');
+
+INSERT INTO CANDIDATURA VALUES (1, 1, 1, 300000.00);
+INSERT INTO CANDIDATURA VALUES (2, 1, 2, 50000.00);
+INSERT INTO CANDIDATURA VALUES (3, 2, 3, 200000.00);
+INSERT INTO CANDIDATURA VALUES (4, 2, 4, 250000.00);
+INSERT INTO CANDIDATURA VALUES (5, 4, 5, 500000.00);

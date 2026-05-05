@@ -1,5 +1,5 @@
-// Idee ca sa fie cat de cat balansat
-// fac mediana din 5 a vectorului de input si folosesc aceasta mediana ca root
+// Am preluat un Treap de pe geeksforgeeks ca nu stiu sa fac BST balansat si am vazut ca totusi 
+// se cerea O(logn) pe operatie si internetul zice ca e mai usor de implementat decat AVL sau Red-Black
 
 #include <iostream>
 #include <fstream>

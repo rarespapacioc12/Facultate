@@ -1,0 +1,23 @@
+Cuvant: aabb
+_ q0 Z
+a q0 Za
+aa q0 Zaa
+aab q1 Za
+aabb q1 Z
+aabb q1 _
+-> Word accepted.
+
+Cuvant: ab
+_ q0 Z
+a q0 Za
+ab q1 Z
+ab q1 _
+-> Word accepted.
+
+Cuvant: aab
+_ q0 Z
+a q0 Za
+aa q0 Zaa
+aab q1 Za
+-> Word rejected. (ultima cale explorata inainte de blocaj)
+
