@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO – Sinteză &amp; Quiz</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #252836;
+    --border: #2e3246;
+    --accent: #7c6af7;
+    --accent2: #56d4b5;
+    --red: #f26b6b;
+    --green: #56d4b5;
+    --yellow: #f5c542;
+    --text: #e2e5f0;
+    --muted: #8b8fa8;
+    --code-bg: #141620;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.65; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; gap: 4px; padding: 8px 16px; z-index: 100; flex-wrap: wrap; }
+  nav button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 13px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all .15s; }
+  nav button:hover, nav button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 80px 20px 60px; }
+
+  /* SECTIONS */
+  section { display: none; }
+  section.visible { display: block; }
+
+  /* CHAPTER HEADERS */
+  h1 { font-size: 1.9rem; color: var(--accent); margin-bottom: 6px; }
+  h2 { font-size: 1.35rem; color: var(--accent2); margin: 28px 0 10px; border-left: 3px solid var(--accent2); padding-left: 10px; }
+  h3 { font-size: 1.05rem; color: var(--yellow); margin: 20px 0 8px; }
+  p { margin-bottom: 10px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 16px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* TAGS */
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .tag-blue { background: #1e2a4a; color: #7ab3f5; }
+  .tag-purple { background: #2a1e4a; color: #b87af5; }
+  .tag-green { background: #1a3430; color: #56d4b5; }
+  .tag-red { background: #3a1e1e; color: #f26b6b; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px; }
+  th { background: var(--surface2); color: var(--accent2); text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* CODE */
+  code { background: var(--code-bg); color: #a9d9f5; padding: 1px 6px; border-radius: 4px; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 13px; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; overflow-x: auto; margin: 10px 0 16px; }
+  pre code { background: none; padding: 0; font-size: 13px; }
+
+  /* ALERTS */
+  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 14px; }
+  .alert-info { background: #1a2840; border-left: 4px solid #5b9fef; }
+  .alert-warn { background: #2e2610; border-left: 4px solid var(--yellow); }
+  .alert-success { background: #1a3430; border-left: 4px solid var(--green); }
+  .alert-danger { background: #3a1a1a; border-left: 4px solid var(--red); }
+
+  /* QUIZ */
+  .quiz-progress { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .quiz-progress .stat { font-size: 13px; }
+  .quiz-progress .stat span { font-weight: 700; color: var(--accent2); font-size: 16px; }
+  .progress-bar { flex: 1; min-width: 120px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s; }
+
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; transition: border-color .2s; }
+  .q-card.answered-correct { border-color: var(--green); }
+  .q-card.answered-wrong { border-color: var(--red); }
+  .q-num { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+  .q-text { font-size: 15px; font-weight: 500; margin-bottom: 16px; line-height: 1.55; }
+  .q-text code { font-size: 13px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-size: 14px; transition: all .15s; display: flex; align-items: center; gap: 10px; }
+  .option:hover:not(.disabled) { border-color: var(--accent); background: #22273a; }
+  .option.correct { background: #1a3430; border-color: var(--green); color: var(--green); }
+  .option.wrong { background: #3a1a1a; border-color: var(--red); color: var(--red); }
+  .option.disabled { cursor: default; }
+  .option-icon { width: 20px; text-align: center; flex-shrink: 0; font-size: 15px; }
+  .explanation { margin-top: 14px; padding: 12px 16px; background: #1a2030; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13.5px; color: #c0c8e0; display: none; }
+  .explanation.show { display: block; }
+
+  .quiz-controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  .btn { background: var(--accent); color: #fff; border: none; padding: 9px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+  .btn-green { background: var(--green); color: #0a1f1a; }
+  .btn-red { background: var(--red); color: #fff; }
+
+  .score-box { text-align: center; padding: 40px; }
+  .score-box .big-score { font-size: 5rem; font-weight: 700; color: var(--accent); }
+  .score-box .big-label { font-size: 1.2rem; color: var(--muted); }
+
+  /* FILTER */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all .15s; }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* LIST STYLES */
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+
+  /* HIGHLIGHT */
+  .hl { color: var(--yellow); font-weight: 600; }
+  .hl-blue { color: #7ab3f5; font-weight: 600; }
+  .hl-green { color: var(--green); font-weight: 600; }
+  .hl-red { color: var(--red); font-weight: 600; }
+
+  @media(max-width:600px){ nav button { font-size: 11px; padding: 4px 9px; } h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <button onclick="show('intro')" class="active">Intro</button>
+  <button onclick="show('cap1')">Cap 1: C++ vs C</button>
+  <button onclick="show('cap2')">Cap 2: Clase &amp; Obiecte</button>
+  <button onclick="show('cap3')">Cap 3: Constructori</button>
+  <button onclick="show('cap4')">Cap 4: Operatori &amp; Static</button>
+  <button onclick="show('cap5')">Cap 5: Moștenire</button>
+  <button onclick="show('cap6')">Cap 6: Funcții virtuale</button>
+  <button onclick="show('cap7')">Cap 7: Excepții</button>
+  <button onclick="show('cap8')">Cap 8: STL</button>
+  <button onclick="show('quiz')">🧠 Quiz</button>
+</nav>
+
+<main>
+
+<!-- INTRO -->
+<section id="intro" class="visible">
+  <h1>Programare Orientată pe Obiecte</h1>
+  <p style="color:var(--muted); margin-bottom:24px">Sinteză teorie + set de întrebări grilă &mdash; FMI București 2025–2026</p>
+
+  <div class="card">
+    <h3>Ce este POO?</h3>
+    <p>O <span class="hl">paradigmă de programare</span> care dictează cum se reprezintă datele și cum se prelucrează. Influențează felul în care sunt gândiți algoritmii.</p>
+    <p>Limbajele OO populare: Java, Python, C++, C#, Ruby. Limbaje non-OO: Go, Julia, Rust (nu sunt strict OO).</p>
+  </div>
+
+  <h2>Principiile fundamentale ale POO</h2>
+  <div class="card">
+    <table>
+      <tr><th>Principiu</th><th>Definiție</th></tr>
+      <tr><td><span class="hl">Încapsularea</span></td><td>Contopirea datelor cu metodele de prelucrare în clase; ascunderea informației; localizare mai bună a erorilor</td></tr>
+      <tr><td><span class="hl">Moștenirea</span></td><td>Extinderea unei clase prin adăugarea de noi funcționalități; reutilizare de cod; relație "is-a"</td></tr>
+      <tr><td><span class="hl">Polimorfismul</span></td><td>O metodă poate avea implementări diferite la niveluri diferite ale ierarhiei; la compilare (overloading) și la execuție (virtual)</td></tr>
+      <tr><td><span class="hl">Ascunderea informației</span></td><td>public / protected / private — controlul accesului la membrii clasei</td></tr>
+      <tr><td><span class="hl">Șabloanele</span></td><td>Programare generică; cod reutilizabil pentru tipuri diferite (nu strict POO)</td></tr>
+    </table>
+  </div>
+
+  <h2>Modificatori de acces</h2>
+  <div class="card">
+    <table>
+      <tr><th>Acces din</th><th><code>public</code></th><th><code>protected</code></th><th><code>private</code></th></tr>
+      <tr><td>Aceeași clasă</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Clase derivate</td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Alte clase</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    </table>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>Clasă vs Obiect:</strong> O <em>clasă</em> definește atribute și metode (proprietățile generale). Un <em>obiect</em> este o instanță a unei clase, cu o stare și un comportament concrete la un moment dat.
+  </div>
+</section>
+
+<!-- CAP 1: C++ vs C -->
+<section id="cap1">
+  <h1>Cap 1: Completări C++ față de C</h1>
+
+  <h2>Versiuni C++</h2>
+  <div class="card">
+    <ul>
+      <li><span class="hl-blue">C++98</span> – standardul inițial, STL</li>
+      <li><span class="hl-blue">C++11</span> – initializer lists, rvalue references, lambda, <code>nullptr</code>, moving constructors</li>
+      <li><span class="hl-blue">C++14</span> – generic lambdas, <code>auto</code>, variable templates</li>
+      <li><span class="hl-blue">C++17</span> – <code>if constexpr</code>, inline variables, nested namespaces</li>
+      <li><span class="hl-blue">C++20</span> – concepts, modules, spaceship operator <code>&lt;=&gt;</code>, coroutines</li>
+      <li><span class="hl-blue">C++23</span> – <code>&lt;stacktrace&gt;</code>, <code>&lt;expected&gt;</code></li>
+    </ul>
+  </div>
+
+  <h2>Supraîncărcarea funcțiilor (Function Overloading)</h2>
+  <div class="card">
+    <p>Utilizarea mai multor funcții cu <span class="hl">același nume</span>. Identificarea se face prin <strong>numărul</strong> și <strong>tipul parametrilor</strong> — tipul de întoarcere <em>nu este suficient</em>.</p>
+    <p>La compilare: transformate în nume unic prin <span class="hl">name mangling</span>.</p>
+    <div class="alert alert-warn">
+      <strong>Ambiguități:</strong>
+      <ul>
+        <li><code>int f(int)</code> și <code>float f(int)</code> → EROARE (diferă doar tipul returnat)</li>
+        <li><code>void f(int *p)</code> și <code>void f(int p[])</code> → EROARE (<code>*p</code> identic cu <code>p[]</code>)</li>
+        <li><code>void f(int x)</code> și <code>void f(int&amp; x)</code> → EROARE ambiguitate</li>
+        <li>Conversii implicite pot genera ambiguitate (ex: <code>myfunc(10)</code> cu <code>float</code> și <code>double</code> versiuni)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Funcții cu valori implicite</h2>
+  <div class="card">
+    <ul>
+      <li>Parametrii cu valori implicite trebuie să fie la <span class="hl">sfârșitul</span> listei</li>
+      <li>Valorile implicite se specifică o <span class="hl">singură dată</span>, de obicei în prototip</li>
+      <li>Atenție la ambiguități la supraîncărcare cu valori implicite</li>
+    </ul>
+    <pre><code>void f(int a, int b = 12);  // b are valoare implicita
+f(1);      // echivalent cu f(1, 12)
+f(1, 20);  // b = 20</code></pre>
+  </div>
+
+  <h2>Tipul referință</h2>
+  <div class="card">
+    <p>O referință este un <span class="hl">pointer implicit</span> — un alt nume (alias) al unui obiect.</p>
+    <ul>
+      <li>Trebuie <strong>inițializată</strong> la declarare (excepție: membri de clasă, parametri, valori returnate)</li>
+      <li>Referințele nule sunt <span class="hl-red">interzise</span></li>
+      <li>Nu se poate obține adresa unei referințe (<code>&amp;ref</code> dă adresa variabilei referite)</li>
+      <li>Nu se pot crea tablouri de referințe (dar se poate cu <code>std::reference_wrapper</code>)</li>
+      <li>Intern sunt tot pointeri, dar mai siguri</li>
+    </ul>
+    <div class="alert alert-warn">
+      <strong>Diferență față de pointer:</strong> Incrementarea unui pointer trece la alt obiect de același tip; incrementarea referinței <em>incrementează valoarea referită</em>.
+    </div>
+    <pre><code>int a = 20;
+int&amp; ref = a;  // ref este alias pentru a
+ref++;         // modifica a (a devine 21)</code></pre>
+  </div>
+
+  <h2>Transmiterea parametrilor</h2>
+  <div class="card">
+    <table>
+      <tr><th>Mod</th><th>Sintaxă</th><th>Efect</th></tr>
+      <tr><td>Prin valoare</td><td><code>void f(int x)</code></td><td>Copie; modificările nu afectează originalul</td></tr>
+      <tr><td>Prin pointer</td><td><code>void f(int* x)</code></td><td>Adresa originalului; modificările afectează originalul</td></tr>
+      <tr><td>Prin referință</td><td><code>void f(int&amp; x)</code></td><td>Alias; modificările afectează originalul; fără overhead de copiere</td></tr>
+    </table>
+  </div>
+
+  <h2>Alocare dinamică în C++</h2>
+  <div class="card">
+    <ul>
+      <li><code>new</code> și <code>delete</code> sunt <span class="hl">operatori</span>, nu funcții</li>
+      <li><code>new</code> alocă și inițializează; <code>delete</code> eliberează</li>
+      <li>La eroare se aruncă excepția <code>bad_alloc</code> din <code>&lt;new&gt;</code></li>
+      <li>Pentru array: <code>new[]</code> și <code>delete[]</code> (obligatoriu pereche)</li>
+      <li>Alternativă la eroare fără excepție: <code>new(nothrow)</code></li>
+    </ul>
+    <pre><code>int *pi = new int;       // alocare
+delete pi;               // eliberare
+int *arr = new int[10];  // vector
+delete[] arr;            // OBLIGATORIU []</code></pre>
+    <div class="alert alert-danger"><strong>Memory leak:</strong> Dacă nu se face <code>delete</code>, zona rămâne ocupată pe toată durata programului.</div>
+  </div>
+
+  <h2>const în C++</h2>
+  <div class="card">
+    <h3>Variante de pointeri const</h3>
+    <table>
+      <tr><th>Declarație</th><th>Ce este constant</th></tr>
+      <tr><td><code>const int* u</code> sau <code>int const* u</code></td><td>Valoarea pointată (nu pointerul)</td></tr>
+      <tr><td><code>int* const w = &amp;d</code></td><td>Pointerul (adresa din pointer)</td></tr>
+      <tr><td><code>const int* const x = &amp;d</code></td><td>Ambele</td></tr>
+    </table>
+    <div class="alert alert-warn">
+      Se poate atribui adresa unui non-const la un pointer const, dar NU invers (fără cast explicit, care e bad practice).
+    </div>
+  </div>
+
+  <h2>mutable</h2>
+  <div class="card">
+    <p>Permite modificarea unui câmp al clasei chiar și dintr-o funcție membră <code>const</code>. Util pentru câmpuri "de caching" care nu afectează starea logică a obiectului.</p>
+    <pre><code>class Z {
+  mutable int j;  // se poate modifica in functii const
+public:
+  void f() const { j++; }  // OK
+};</code></pre>
+  </div>
+</section>
+
+<!-- CAP 2: CLASE SI OBIECTE -->
+<section id="cap2">
+  <h1>Cap 2: Clase, Obiecte, Încapsulare</h1>
+
+  <h2>Structura unei clase</h2>
+  <div class="card">
+    <pre><code>class NumeClasa {
+  // private implicit
+  int dataMembru;
+public:
+  void metodaPublica();
+protected:
+  void metodaProtejata();
+};</code></pre>
+    <ul>
+      <li>Default în <code>class</code>: <span class="hl-red">private</span></li>
+      <li>Default în <code>struct</code>: <span class="hl-green">public</span></li>
+      <li>Default în <code>union</code>: <span class="hl-green">public</span></li>
+      <li>Operatorul <code>::</code> (scope resolution) pentru definirea metodelor în afara clasei</li>
+      <li>Nu se poate inițializa un câmp nestatic la declarare (se face în constructor)</li>
+    </ul>
+  </div>
+
+  <h2>struct vs class vs union</h2>
+  <div class="card">
+    <table>
+      <tr><th></th><th>class</th><th>struct</th><th>union</th></tr>
+      <tr><td>Default acces</td><td>private</td><td>public</td><td>public</td></tr>
+      <tr><td>Poate moșteni</td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Funcții virtuale</td><td>✅</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Memorie</td><td>Câmpuri separate</td><td>Câmpuri separate</td><td>Toți câmpii la aceeași adresă</td></tr>
+    </table>
+    <div class="alert alert-warn"><strong>Union:</strong> Nu poate moșteni, nu poate fi moștenită, nu are funcții virtuale, nu are variabile statice de instanță.</div>
+  </div>
+
+  <h2>Funcții prieten (friend)</h2>
+  <div class="card">
+    <p>O funcție prieten are acces la câmpurile <code>private</code> și <code>protected</code> ale clasei, dar <span class="hl">nu are pointerul <code>this</code></span>.</p>
+    <ul>
+      <li>Folositoare la supraîncărcarea operatorilor, funcții de I/O</li>
+      <li>O clasă poate fi declarată prieten: toate metodele ei au acces la privat</li>
+      <li>Relația friend nu este tranzitivă sau simetrică</li>
+    </ul>
+    <pre><code>class MyClass {
+  int a, b;
+public:
+  friend int sum(MyClass x);  // functie friend
+};
+int sum(MyClass x) { return x.a + x.b; }  // acces la privat</code></pre>
+  </div>
+
+  <h2>Funcții inline</h2>
+  <div class="card">
+    <p>Sugestie/cerere pentru compilator de a substitui apelul cu corpul funcției. Elimină overhead-ul de apel.</p>
+    <ul>
+      <li>Explicit: cuvânt cheie <code>inline</code></li>
+      <li>Implicit: funcții definite în corpul clasei sunt inline automat</li>
+      <li>Nu funcționează bine cu funcțiile virtuale (ne trebuie adresa pentru vtable)</li>
+    </ul>
+  </div>
+
+  <h2>Pointerul this</h2>
+  <div class="card">
+    <ul>
+      <li>Fiecare funcție membră ne-statică are implicit pointerul <code>this</code></li>
+      <li>Pointează către obiectul curent care a apelat funcția</li>
+      <li>Funcțiile prieten <span class="hl-red">nu au</span> <code>this</code></li>
+      <li>Funcțiile statice <span class="hl-red">nu au</span> <code>this</code></li>
+      <li>Util la: returnarea obiectului curent, distincție câmpuri/parametri cu același nume</li>
+    </ul>
+    <pre><code>A(int x) { this->x = x; }  // this->x = camp, x = param</code></pre>
+  </div>
+</section>
+
+<!-- CAP 3: CONSTRUCTORI / DESTRUCTORI -->
+<section id="cap3">
+  <h1>Cap 3: Constructori &amp; Destructori</h1>
+
+  <h2>Caracteristici generale</h2>
+  <div class="card">
+    <ul>
+      <li>Numele = numele clasei; destructorul are prefix <code>~</code></li>
+      <li><span class="hl">Nu au tip de întoarcere</span> (nici măcar void)</li>
+      <li>Nu pot fi moșteniți (până în C++11; din C++11 se poate cu <code>using</code>)</li>
+      <li>Nu se pot crea pointeri la constructor/destructor</li>
+      <li>Constructorii pot fi supraîncărcați; <span class="hl">destructorul este unic și fără parametri</span></li>
+    </ul>
+  </div>
+
+  <h2>Tipuri de constructori</h2>
+  <div class="card">
+    <table>
+      <tr><th>Tip</th><th>Definiție</th><th>Observații</th></tr>
+      <tr><td>Default (fără param)</td><td><code>A() { ... }</code></td><td>Apelat pentru obiecte neînițializate și array-uri dinamice</td></tr>
+      <tr><td>Parametrizat</td><td><code>A(int x) { ... }</code></td><td>Poate genera conversii implicite cu un parametru</td></tr>
+      <tr><td>De copiere</td><td><code>A(const A&amp; o)</code></td><td>Apelat la inițializare, apel prin valoare, returnare din funcție</td></tr>
+      <tr><td>Cu valori implicite</td><td><code>A(int x=0, float y=0)</code></td><td>Poate ține loc de constructor default</td></tr>
+    </table>
+  </div>
+
+  <h2>Orice clasă are implicit (dacă nu definim)</h2>
+  <div class="card">
+    <ol>
+      <li>Constructor de inițializare (default)</li>
+      <li>Constructor de copiere (copiere bit-cu-bit)</li>
+      <li>Destructor</li>
+      <li>Operator de atribuire <code>=</code></li>
+    </ol>
+    <div class="alert alert-danger">
+      <strong>Problemă la alocare dinamică:</strong> Constructorul de copiere implicit face copiere superficială (shallow copy) — ambele obiecte vor pointa spre același bloc de memorie. La distrugere: <code>double free</code>! Soluție: redefinim constructorul de copiere cu <strong>deep copy</strong>.
+    </div>
+  </div>
+
+  <h2>Constructorul de copiere — când se apelează?</h2>
+  <div class="card">
+    <ul>
+      <li>Inițializare explicită: <code>MyClass B = A;</code> sau <code>MyClass B(A);</code></li>
+      <li>Apel de funcție cu obiect ca <strong>parametru prin valoare</strong></li>
+      <li>Returnare din funcție a unui obiect prin valoare</li>
+    </ul>
+    <div class="alert alert-warn">Operator <code>=</code> între obiecte existente <strong>nu</strong> apelează constructorul de copiere, ci operatorul de atribuire!</div>
+    <pre><code>classname(const classname&amp; o) {
+  // deep copy
+}</code></pre>
+  </div>
+
+  <h2>Lista de inițializare a constructorilor</h2>
+  <div class="card">
+    <p>Obligatorie pentru: referințe, câmpuri <code>const</code>, sub-obiecte fără constructor default, apelul constructorului din clasa de bază.</p>
+    <pre><code>class Proiector : public Dispozitiv {
+public:
+  Proiector(int nr) : Dispozitiv(nr) { }  // apel constructor baza
+};
+
+class Fred {
+  const int size;
+public:
+  Fred(int sz) : size(sz) {}  // const necesita lista de initializare
+};</code></pre>
+  </div>
+
+  <h2>Ordinea apelării constructorilor/destructorilor</h2>
+  <div class="card">
+    <ol>
+      <li>Constructorii <strong>claselor de bază</strong> (în ordinea moștenirii)</li>
+      <li>Constructorii <strong>membrilor</strong> clasei (în ordinea declarării în clasă)</li>
+      <li>Constructorul <strong>propriu</strong></li>
+    </ol>
+    <p>Destructorii în <span class="hl">ordine inversă</span>. Obiectele globale se construiesc înaintea celor locale.</p>
+    <div class="alert alert-success">Dacă un parametru este transmis <strong>prin referință</strong>, <em>nu</em> se apelează constructorul de copiere la intrarea în funcție.</div>
+  </div>
+
+  <h2>Membrii statici ai clasei</h2>
+  <div class="card">
+    <ul>
+      <li>Există o <span class="hl">singură copie</span> pentru toate obiectele clasei</li>
+      <li>Variabilele statice trebuie <strong>definite și inițializate în afara clasei</strong>: <code>int A::i = 1;</code></li>
+      <li>Funcțiile statice <strong>nu au <code>this</code></strong> și pot referi doar membrii statici direct</li>
+      <li>Se accesează: <code>Clasa::membru</code> sau <code>obiect.membru</code></li>
+    </ul>
+    <pre><code>class A {
+  static int count;
+public:
+  static int getCount() { return count; }
+};
+int A::count = 0;  // definire si initializare in afara clasei</code></pre>
+  </div>
+</section>
+
+<!-- CAP 4: OPERATORI SI STATIC -->
+<section id="cap4">
+  <h1>Cap 4: Supraîncărcarea Operatorilor</h1>
+
+  <h2>Principii</h2>
+  <div class="card">
+    <ul>
+      <li>Majoritate operatorilor pot fi supraîncărcați</li>
+      <li>Nu se poate redefini <strong>precedența</strong> operatorilor</li>
+      <li>Nu se poate redefini <strong>numărul de operanzi</strong></li>
+      <li>Nu se pot supraîncărca: <code>.</code>, <code>::</code>, <code>.*</code>, <code>?:</code>, <code>sizeof</code>, <code>typeid</code>, <code>alignof</code></li>
+    </ul>
+  </div>
+
+  <h2>Funcții operator ca membri ai clasei</h2>
+  <div class="card">
+    <pre><code>ret-type ClassName::operator#(arg-list) { ... }
+// Exemplu:
+loc loc::operator+(loc op2) {
+  loc temp;
+  temp.longitude = longitude + op2.longitude;  // this implicit
+  return temp;
+}</code></pre>
+    <ul>
+      <li>Pentru operatori binari: un singur argument (obiectul din stânga apelează, cel din dreapta e argument)</li>
+      <li>Prefix <code>++</code>: <code>operator++()</code> — fără argument</li>
+      <li>Postfix <code>++</code>: <code>operator++(int)</code> — cu parametru int "dummy"</li>
+    </ul>
+  </div>
+
+  <h2>Funcții operator ca funcții prieten</h2>
+  <div class="card">
+    <ul>
+      <li><span class="hl-red">Nu are <code>this</code></span> → ambii operanzi ca parametri</li>
+      <li>Avantaj: permite <code>100 + ob</code> (int pe stânga)</li>
+      <li>Pentru <code>++</code>/<code>--</code> unari prieten → parametru <strong>referință</strong> (altfel modificăm copia)</li>
+    </ul>
+    <div class="alert alert-warn">
+      <strong>Operatori care NU pot fi prieten:</strong> <code>=</code>, <code>()</code>, <code>[]</code>, <code>-&gt;</code>
+    </div>
+    <pre><code>friend loc operator+(loc op1, loc op2);  // ambii operanzi
+friend loc operator++(loc&amp; op);           // referinta pt unari</code></pre>
+  </div>
+
+  <h2>Supraîncărcarea <code>new</code> și <code>delete</code></h2>
+  <div class="card">
+    <ul>
+      <li>Se poate face la nivel de clasă sau global</li>
+      <li>La <code>new</code> supraîncărcat: constructorul se apelează automat</li>
+      <li>La <code>delete</code> supraîncărcat: destructorul se apelează automat</li>
+      <li>Pentru array-uri: <code>operator new[]</code> și <code>operator delete[]</code></li>
+    </ul>
+  </div>
+
+  <h2>Supraîncărcarea <code>[]</code>, <code>()</code></h2>
+  <div class="card">
+    <ul>
+      <li><code>[]</code> poate întoarce <strong>referință</strong> → poate apărea la stânga atribuirii (<code>ob[1] = 25</code>)</li>
+      <li><code>()</code> permite număr arbitrar de parametri → obiecte funcționale (functori)</li>
+    </ul>
+  </div>
+
+  <h2>Spaceship operator (C++20)</h2>
+  <div class="card">
+    <p><code>&lt;=&gt;</code> supraîncarcă toți operatorii de comparație simultan. Cu <code>= default</code> compilatorul generează automat toți operatorii de comparație pe baza câmpurilor clasei.</p>
+  </div>
+</section>
+
+<!-- CAP 5: MOSTENIRE -->
+<section id="cap5">
+  <h1>Cap 5: Moștenirea în C++</h1>
+
+  <h2>Concepte fundamentale</h2>
+  <div class="card">
+    <ul>
+      <li>Clasa de bază = <em>superclasă</em> = <em>clasă părinte</em></li>
+      <li>Clasa derivată = <em>subclasă</em> = <em>clasă copil</em></li>
+      <li><span class="hl">Agregare (compunere)</span>: relație "has-a" — un obiect conține alt obiect</li>
+      <li><span class="hl">Moștenire</span>: relație "is-a" — o clasă este un tip al altei clase</li>
+    </ul>
+    <pre><code>class Derivata : [modificator_acces] Baza { ... };</code></pre>
+  </div>
+
+  <h2>Modificatori de acces la moștenire</h2>
+  <div class="card">
+    <table>
+      <tr><th>Moștenire</th><th>public din bază</th><th>protected din bază</th><th>private din bază</th></tr>
+      <tr><td><code>public</code></td><td>public</td><td>protected</td><td>inaccesibil</td></tr>
+      <tr><td><code>protected</code></td><td>protected</td><td>protected</td><td>inaccesibil</td></tr>
+      <tr><td><code>private</code></td><td>private</td><td>private</td><td>inaccesibil</td></tr>
+    </table>
+    <div class="alert alert-info">Membrii <code>private</code> din clasa de bază sunt întotdeauna <strong>inaccesibili</strong> direct în clasa derivată, indiferent de tipul moștenirii.</div>
+  </div>
+
+  <h2>Moștenire private</h2>
+  <div class="card">
+    <ul>
+      <li>E mai bine să se folosească <strong>compunerea</strong> în loc de moștenire privată</li>
+      <li>Nu mai avem relație "is-a" pentru obiect tratat extern</li>
+      <li>Se poate restaura accesul public: <code>using Baza::numeMembru;</code></li>
+    </ul>
+  </div>
+
+  <h2>Redefinirea funcțiilor membre</h2>
+  <div class="card">
+    <p>2 modalități:</p>
+    <ol>
+      <li>Cu <strong>același antet</strong> ("redefining" / "overriding" pt virtuale)</li>
+      <li>Cu <strong>schimbarea listei de argumente sau tipului returnat</strong></li>
+    </ol>
+    <div class="alert alert-danger">
+      <strong>Important:</strong> La redefinirea oricărei funcții din clasa de bază, <em>toate celelalte versiuni (supraîncărcări) ale acelei funcții sunt automat ascunse</em> în clasa derivată!
+    </div>
+    <p>Schimbarea semnăturii/tipului returnat = schimbarea interfeței = <span class="hl-red">contravine polimorfismului</span>.</p>
+  </div>
+
+  <h2>Funcții care nu se moștenesc automat</h2>
+  <div class="card">
+    <ul>
+      <li>Constructorii (se redefinesc noi constructori pentru derivată)</li>
+      <li>Destructorii</li>
+      <li>Operatorul <code>=</code></li>
+    </ul>
+    <p>Din C++11, constructorii se pot moșteni explicit cu <code>using Baza::Baza;</code>.</p>
+  </div>
+
+  <h2>Compatibilitate și conversii</h2>
+  <div class="card">
+    <p>Există compatibilitate <strong>numai pentru moștenire publică</strong>, în sensul <em>derivată → bază</em> (upcasting — sigur):</p>
+    <ul>
+      <li>Obiect derivat → obiect bază</li>
+      <li>Pointer/referință la derivat → pointer/referință la bază</li>
+    </ul>
+    <p><strong>Downcasting</strong> (bază → derivată) este periculos; se face cu <code>dynamic_cast</code>.</p>
+  </div>
+
+  <h2>Moștenire multiplă</h2>
+  <div class="card">
+    <p>C++ suportă moștenire multiplă (puține alte limbaje o au). Problemă majoră: <span class="hl">problema diamantului</span>.</p>
+    <pre><code>class Baza { public: int i; };
+class D1 : public Baza { };
+class D2 : public Baza { };
+class D3 : public D1, public D2 { };
+// D3 are DOUA copii ale lui i → ambiguitate</code></pre>
+    <h3>Moștenire virtuală — rezolvare</h3>
+    <pre><code>class D1 : virtual public Baza { };
+class D2 : virtual public Baza { };
+class D3 : public D1, public D2 { };
+// Acum D3 are o singura copie a lui i</code></pre>
+  </div>
+</section>
+
+<!-- CAP 6: FUNCTII VIRTUALE -->
+<section id="cap6">
+  <h1>Cap 6: Funcții Virtuale &amp; Polimorfism la Execuție</h1>
+
+  <h2>Early binding vs Late binding</h2>
+  <div class="card">
+    <table>
+      <tr><th></th><th>Early binding</th><th>Late binding (virtual)</th></tr>
+      <tr><td>Când</td><td>La compilare</td><td>La execuție (runtime)</td></tr>
+      <tr><td>Bazat pe</td><td>Tipul variabilei</td><td>Tipul real al obiectului</td></tr>
+      <tr><td>Performanță</td><td>Mai rapidă</td><td>Mai lentă (dereferențiere ptr)</td></tr>
+      <tr><td>Sintaxă</td><td>Implicit</td><td>Cuvânt cheie <code>virtual</code></td></tr>
+    </table>
+  </div>
+
+  <h2>Mecanismul virtual (vtable / vptr)</h2>
+  <div class="card">
+    <ul>
+      <li>Fiecare clasă cu funcții virtuale are o <span class="hl">vtable</span> — tabelă de pointeri la funcțiile virtuale</li>
+      <li>Fiecare obiect din acea clasă conține un <span class="hl">vptr</span> — pointer la vtable-ul clasei sale</li>
+      <li>vptr este inițializat în constructor</li>
+      <li>La apelul unei funcții virtuale: <em>obiect → vptr → vtable → funcție</em></li>
+      <li>De aceea clasele cu funcții virtuale sunt <strong>mai mari</strong> cu sizeof(void*)</li>
+    </ul>
+    <div class="alert alert-warn">
+      <strong>Cost:</strong> Funcțiile virtuale nu pot fi inline (ne trebuie adresa funcției). Folosiți doar când aveți nevoie de polimorfism.
+    </div>
+  </div>
+
+  <h2>Funcții virtuale pure și clase abstracte</h2>
+  <div class="card">
+    <pre><code>virtual int functie(int i) = 0;  // virtuala pura</code></pre>
+    <ul>
+      <li><span class="hl">Clasă abstractă</span> = cel puțin o funcție virtuală pură</li>
+      <li>Nu se pot instanția obiecte de tip abstract (eroare la compilare)</li>
+      <li>Se pot crea pointeri și referințe la clasa abstractă</li>
+      <li>Dacă clasa derivată nu definește funcția pură, ea devine și ea abstractă</li>
+      <li>Utilitate importantă: prevenirea <span class="hl-red">object slicing</span></li>
+    </ul>
+  </div>
+
+  <h2>Constructori și virtualizare</h2>
+  <div class="card">
+    <div class="alert alert-danger">
+      <strong>NU</strong> putem avea constructori virtuali.
+    </div>
+    <ul>
+      <li>Apelul unei funcții virtuale din constructor/destructor folosește <strong>versiunea locală</strong> (early binding), nu cea din derivată</li>
+      <li>De ce? La momentul constructorului bazei, obiectul derivat nu e complet construit, vptr-ul local e cel al bazei</li>
+      <li>Alternativă: pattern <em>factory</em>, funcții de clonare (virtual constructor pattern)</li>
+    </ul>
+  </div>
+
+  <h2>Destructori virtuali</h2>
+  <div class="card">
+    <div class="alert alert-danger">
+      Dacă facem <strong>upcasting</strong> (pointer de tip bază la obiect derivat) și obiectul are memorie alocată dinamic, destructorul trebuie să fie <span class="hl-red">virtual</span> — altfel se apelează doar destructorul bazei, memory leak pentru parte derivată!
+    </div>
+    <pre><code>class Baza {
+public:
+  virtual ~Baza() {}  // OBLIGATORIU daca derivata aloca memorie
+};
+Base2* p = new Derived2;
+delete p;  // fara virtual: apeleaza doar ~Baza()
+           // cu virtual: apeleaza ~Derived2() apoi ~Baza()</code></pre>
+    <p><strong>Regula:</strong> Dacă o clasă are funcții virtuale, declarați destructorul virtual.</p>
+    <p>Excepție: <em>destructor protected și non-virtual</em> — când nu dorim instanțierea directă.</p>
+  </div>
+
+  <h2>Upcasting și Downcasting</h2>
+  <div class="card">
+    <ul>
+      <li><span class="hl">Upcasting</span> (derivat → bază): sigur, implicit</li>
+      <li><span class="hl">Downcasting</span> (bază → derivat): periculos, explicit</li>
+      <li><code>dynamic_cast&lt;Derivat*&gt;(ptr)</code>: sigur, întoarce <code>nullptr</code> dacă eșuează, necesită vtable (funcții virtuale)</li>
+      <li><code>static_cast&lt;Derivat*&gt;(ptr)</code>: fără verificare runtime, mai rapid dar periculos</li>
+    </ul>
+  </div>
+
+  <h2>Object slicing</h2>
+  <div class="card">
+    <p>Când un obiect derivat este <strong>copiat prin valoare</strong> într-o variabilă de tip bază, parte derivată se "taie". Funcțiile virtuale nu mai funcționează corect.</p>
+    <pre><code>void describe(Pet p) { ... }  // parametru prin VALOARE
+describe(dog);  // dog devine Pet, informatia specifica se pierde!</code></pre>
+    <p>Soluție: transmiteți prin <strong>referință sau pointer</strong>, sau folosiți clase abstracte.</p>
+  </div>
+
+  <h2>cuvântul cheie <code>override</code> (C++11)</h2>
+  <div class="card">
+    <p>Previne greșeli la redefinirea funcțiilor virtuale (ex: schimbare accidentală de semnătură). Dacă funcția nu există în bază, eroare de compilare.</p>
+    <pre><code>void play(note) const override { ... }  // garanteaza ca suprascrie</code></pre>
+  </div>
+</section>
+
+<!-- CAP 7: EXCEPTII -->
+<section id="cap7">
+  <h1>Cap 7: Tratarea Excepțiilor</h1>
+
+  <h2>Structura try-catch-throw</h2>
+  <div class="card">
+    <pre><code>try {
+  // cod care poate arunca exceptii
+  throw TipExceptie("mesaj");
+}
+catch (TipExceptie&amp; e) {  // prinde prin referinta
+  // gestionare eroare
+}
+catch (...) {  // prinde orice exceptie
+  // handler generic
+}</code></pre>
+    <ul>
+      <li>Dacă se face <code>throw</code> și nu există <code>try</code> corespunzător → programul se termină prin <code>terminate()</code></li>
+      <li>Dacă nu există <code>catch</code> potrivit → <code>terminate()</code></li>
+      <li><code>terminate()</code> poate fi redefinit</li>
+    </ul>
+  </div>
+
+  <h2>Ierarhia de excepții standard</h2>
+  <div class="card">
+    <p>Toate excepțiile standard moștenesc din <code>std::exception</code>.</p>
+    <ul>
+      <li><code>std::logic_error</code> — erori logice (argument invalid, out of range)</li>
+      <li><code>std::runtime_error</code> — erori la execuție (overflow, underflow)</li>
+      <li><code>std::bad_alloc</code> — eșec la <code>new</code></li>
+    </ul>
+    <div class="alert alert-warn">
+      Ordinea catch-urilor contează! Puneți catch-ul pe <strong>tipul derivat PRIMUL</strong>, apoi pe tipul de bază. Altfel catch-ul de bază prinde tot și cel de derivat nu se execută niciodată.
+    </div>
+  </div>
+
+  <h2>Bune practici</h2>
+  <div class="card">
+    <ul>
+      <li>Prindeți prin <strong>referință const</strong> (<code>catch(const std::exception&amp; e)</code>)</li>
+      <li>Nu prindeți prin valoare → riscați object slicing</li>
+      <li>Aruncați excepții în constructori dacă obiectul ar fi invalid</li>
+      <li>Fiecare modul ar trebui să aibă o ierarhie proprie derivată (indirect) din <code>std::exception</code></li>
+      <li>Re-aruncare: <code>throw;</code> fără argument → re-aruncă excepția curentă fără copiere</li>
+      <li><code>noexcept</code> / <code>noexcept(false)</code> — specifică dacă o funcție aruncă excepții</li>
+    </ul>
+  </div>
+
+  <h2>Când să folosim excepții?</h2>
+  <div class="card">
+    <ul>
+      <li>Când alternativa cu coduri de eroare este mai complicată</li>
+      <li>Când avem separare clară între "happy path" și "bad path"</li>
+      <li>În constructori (altfel avem obiecte invalide)</li>
+      <li><span class="hl-red">Nu</span> când locul erorii e aproape de catch (mai simplu cu coduri de eroare)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CAP 8: STL -->
+<section id="cap8">
+  <h1>Cap 8: Standard Template Library (STL)</h1>
+
+  <h2>Componentele STL</h2>
+  <div class="card">
+    <table>
+      <tr><th>Componentă</th><th>Descriere</th></tr>
+      <tr><td><span class="hl">Containere</span></td><td>Stochează date: vector, list, map, set, stack, queue, etc.</td></tr>
+      <tr><td><span class="hl">Iteratori</span></td><td>Gestionează poziția curentă în container; decuplează algoritmii de containere</td></tr>
+      <tr><td><span class="hl">Algoritmi</span></td><td>Funcții template pe domenii definite cu iteratori: sort, find, copy, etc.</td></tr>
+      <tr><td><span class="hl">Functori</span></td><td>Obiecte funcționale (operator() supraîncărcat)</td></tr>
+      <tr><td><span class="hl">Allocatori</span></td><td>Gestionarea memoriei pentru containere</td></tr>
+    </table>
+  </div>
+
+  <h2>Tipuri de containere</h2>
+  <div class="card">
+    <table>
+      <tr><th>Tip</th><th>Exemple</th><th>Caracteristici</th></tr>
+      <tr><td>Secvențiale</td><td><code>vector</code>, <code>list</code>, <code>deque</code></td><td>Ordine liniară, acces secvențial sau aleator</td></tr>
+      <tr><td>Asociative</td><td><code>set</code>, <code>map</code>, <code>multiset</code>, <code>multimap</code></td><td>Regăsire eficientă după cheie; ordonate (arbore BST)</td></tr>
+      <tr><td>Neordonate</td><td><code>unordered_map</code>, <code>unordered_set</code></td><td>Hash table; O(1) mediu; nu păstrează ordinea</td></tr>
+      <tr><td>Adaptoare</td><td><code>stack</code>, <code>queue</code>, <code>priority_queue</code></td><td>Încapsulează alt container; fără iterator!</td></tr>
+    </table>
+  </div>
+
+  <h2>vector</h2>
+  <div class="card">
+    <ul>
+      <li>Array dinamic; elemente stocate <strong>secvențial în memorie continuă</strong></li>
+      <li>Acces O(1) la orice poziție prin <code>[]</code></li>
+      <li>Adăugare/ștergere O(1) la final (<code>push_back</code>, <code>pop_back</code>)</li>
+      <li>Inserare/ștergere la mijloc: O(n)</li>
+      <li>Funcții: <code>push_back</code>, <code>pop_back</code>, <code>insert</code>, <code>erase</code>, <code>size</code>, <code>resize</code>, <code>clear</code>, <code>empty</code>, <code>begin</code>, <code>end</code></li>
+    </ul>
+  </div>
+
+  <h2>list</h2>
+  <div class="card">
+    <ul>
+      <li>Listă dublu înlănțuită</li>
+      <li>Inserare/ștergere O(1) pe orice poziție (dacă ai iteratorul)</li>
+      <li>Nu are acces aleator prin <code>[]</code></li>
+      <li>Funcții extra față de vector: <code>push_front</code>, <code>pop_front</code>, <code>sort</code>, <code>merge</code>, <code>reverse</code>, <code>remove</code></li>
+    </ul>
+  </div>
+
+  <h2>map</h2>
+  <div class="card">
+    <ul>
+      <li>Dicționar ordonat: perechi cheie → valoare; chei unice</li>
+      <li>Implementat cu arbore BST balansat; O(log n) la căutare/inserare</li>
+      <li><code>operator[]</code>: inserează dacă cheia nu există</li>
+      <li><code>find</code>: întoarce iterator sau <code>end()</code> dacă nu există</li>
+      <li><code>multimap</code>: permite chei duplicate</li>
+      <li><code>unordered_map</code>: hash table, O(1) mediu, nu menține ordinea</li>
+    </ul>
+  </div>
+
+  <h2>Iteratori</h2>
+  <div class="card">
+    <ul>
+      <li>Obiect care gestionează o poziție în container</li>
+      <li>Suportă: <code>++</code>, <code>--</code>, <code>*</code> (dereferențiere), <code>==</code>, <code>!=</code></li>
+      <li>Adaptoarele de containere (stack, queue, priority_queue) <span class="hl-red">nu oferă iterator</span></li>
+      <li>Tipuri: input, output, forward, bidirectional, random access, reverse</li>
+    </ul>
+    <pre><code>vector&lt;int&gt;::iterator it;
+for(it = v.begin(); it != v.end(); it++)
+  cout &lt;&lt; *it;</code></pre>
+  </div>
+
+  <h2>stack și queue</h2>
+  <div class="card">
+    <table>
+      <tr><th></th><th>stack</th><th>queue</th><th>priority_queue</th></tr>
+      <tr><td>Strategie</td><td>LIFO</td><td>FIFO</td><td>Prioritate (max-heap)</td></tr>
+      <tr><td>Container implicit</td><td>deque</td><td>deque</td><td>vector</td></tr>
+      <tr><td>Metode</td><td>push, pop, top</td><td>push, pop, front, back</td><td>push, pop, top</td></tr>
+    </table>
+  </div>
+
+  <h2>Algoritmi STL</h2>
+  <div class="card">
+    <ul>
+      <li>Header: <code>&lt;algorithm&gt;</code>, <code>&lt;numeric&gt;</code></li>
+      <li>Operații fără modificare: <code>find</code>, <code>count</code>, <code>accumulate</code>, <code>count_if</code></li>
+      <li>Operații cu modificare: <code>copy</code>, <code>transform</code>, <code>reverse</code>, <code>sort</code></li>
+      <li>Sortări: <code>sort</code>, <code>stable_sort</code></li>
+      <li>Căutare binară: <code>binary_search</code></li>
+      <li>Min/max: <code>min</code>, <code>max</code>, <code>min_element</code>, <code>max_element</code></li>
+    </ul>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <h1>🧠 Quiz – Întrebări de Teorie POO</h1>
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" onclick="filterQuiz('all')">Toate</button>
+    <button class="filter-btn" onclick="filterQuiz('poo')">Principii POO</button>
+    <button class="filter-btn" onclick="filterQuiz('cpp')">C++ Baze</button>
+    <button class="filter-btn" onclick="filterQuiz('clase')">Clase &amp; Obiecte</button>
+    <button class="filter-btn" onclick="filterQuiz('mostenire')">Moștenire</button>
+    <button class="filter-btn" onclick="filterQuiz('virtual')">Virtual</button>
+    <button class="filter-btn" onclick="filterQuiz('exceptii')">Excepții</button>
+    <button class="filter-btn" onclick="filterQuiz('stl')">STL</button>
+  </div>
+  <div class="quiz-progress" id="quizProgress">
+    <div class="stat">Răspuns: <span id="answeredCount">0</span> / <span id="totalCount">0</span></div>
+    <div class="stat">Corecte: <span id="correctCount">0</span></div>
+    <div class="stat">Greșite: <span id="wrongCount">0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <button class="btn btn-outline" onclick="resetQuiz()">🔄 Reset</button>
+  </div>
+  <div id="quizContainer"></div>
+</section>
+
+</main>
+
+<script>
+// ====== NAVIGATION ======
+function show(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const navBtns = document.querySelectorAll('nav button');
+  const idxMap = {intro:0, cap1:1, cap2:2, cap3:3, cap4:4, cap5:5, cap6:6, cap7:7, cap8:8, quiz:9};
+  if(idxMap[id] !== undefined) navBtns[idxMap[id]].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ====== QUIZ DATA ======
+const questions = [
+  // ---- PRINCIPII POO ----
+  {
+    cat: 'poo',
+    q: 'Care sunt principalele concepte ale Programării Orientate pe Obiecte?',
+    opts: [
+      'Obiecte, Clase, Moștenire, Încapsulare, Polimorfism',
+      'Pointeri, Referințe, Funcții, Structuri, Uniuni',
+      'Compilare, Linkare, Execuție, Depanare, Testare',
+      'Variabile, Constante, Expresii, Instrucțiuni, Blocuri'
+    ],
+    correct: 0,
+    explanation: 'Principalele concepte POO sunt: Obiecte, Clase, Moștenire, Ascunderea informației (Încapsulare) și Polimorfism. Șabloanele sunt un concept adiacent (programare generică, nu strict POO).'
+  },
+  {
+    cat: 'poo',
+    q: 'Ce este Încapsularea?',
+    opts: [
+      'Posibilitatea de a extinde o clasă prin adăugarea de noi funcționalități',
+      'Contopirea datelor cu metodele de prelucrare în clase; ascunderea informației',
+      'O metodă poate avea implementări diferite la niveluri diferite ale ierarhiei',
+      'Mecanismul de transmitere a parametrilor prin referință'
+    ],
+    correct: 1,
+    explanation: 'Încapsularea = data hiding. Contopește datele cu codul (metodele) în clase, ducând la o localizare mai bună a erorilor și modularizarea problemei. Doar metodele proprii ale obiectului pot accesa starea acestuia.'
+  },
+  {
+    cat: 'poo',
+    q: 'Ce tip de relație descrie Moștenirea?',
+    opts: [
+      '"has-a" (un obiect conține alt obiect)',
+      '"uses-a" (un obiect folosește alt obiect)',
+      '"is-a" sau "is-like-a" (o clasă este un tip al altei clase)',
+      '"creates-a" (un obiect creează alt obiect)'
+    ],
+    correct: 2,
+    explanation: 'Moștenirea descrie relația "is-a" / "is-like-a". Agregarea (compunerea) descrie relația "has-a".'
+  },
+  {
+    cat: 'poo',
+    q: 'Care este diferența dintre polimorfismul la compilare și polimorfismul la execuție?',
+    opts: [
+      'Nu există diferență, ambele funcționează identic',
+      'Polimorfismul la compilare = supraîncărcarea funcțiilor; polimorfismul la execuție = funcții virtuale (late binding)',
+      'Polimorfismul la compilare = funcții virtuale; polimorfismul la execuție = supraîncărcarea funcțiilor',
+      'Polimorfismul la compilare = moștenire; polimorfismul la execuție = template-uri'
+    ],
+    correct: 1,
+    explanation: 'Polimorfism la compilare (static): supraîncărcarea funcțiilor și operatorilor — rezolvat la compilare. Polimorfism la execuție (dynamic): funcții virtuale — rezolvat la runtime prin vtable.'
+  },
+  {
+    cat: 'poo',
+    q: 'Ce tipuri de acces există în C++ pentru membrii unei clase?',
+    opts: [
+      'public, private, friend',
+      'public, protected, private',
+      'global, local, static',
+      'extern, static, register'
+    ],
+    correct: 1,
+    explanation: 'Modificatorii de acces în C++ sunt: public (accesibil de oricine), protected (accesibil din clasă și derivate), private (accesibil doar din clasă). friend este o altă facilitate, nu modificator de acces.'
+  },
+  {
+    cat: 'poo',
+    q: 'Un program orientat obiect este descris cel mai bine ca:',
+    opts: [
+      'O colecție de funcții care se apelează recursiv',
+      'O colecție de obiecte care interacționează prin mesaje (apelând metode)',
+      'O colecție de date globale accesate prin funcții statice',
+      'Un set de instrucțiuni executate secvențial'
+    ],
+    correct: 1,
+    explanation: 'Un program OO este o colecție de obiecte care interacționează unul cu celălalt prin mesaje (aplicând o metodă). Fiecare obiect are stare (date) și comportament (metode).'
+  },
+
+  // ---- C++ BAZE ----
+  {
+    cat: 'cpp',
+    q: 'Cum se identifică funcțiile supraîncărcate în C++?',
+    opts: [
+      'Prin tipul de întoarcere',
+      'Prin numărul de parametri și tipul lor',
+      'Prin numele funcției',
+      'Prin modificatorii de acces'
+    ],
+    correct: 1,
+    explanation: 'Funcțiile supraîncărcate se identifică prin numărul de parametri și tipul lor. Tipul de întoarcere singur nu este suficient pentru a diferenția funcțiile supraîncărcate.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Care dintre următoarele declarații este invalidă din cauza ambiguității la supraîncărcarea funcțiilor?',
+    opts: [
+      'int f(int) și float f(double)',
+      'int f(int) și float f(int) — diferă doar tipul returnat',
+      'void f(int) și void f(double)',
+      'void f() și void f(int, int)'
+    ],
+    correct: 1,
+    explanation: 'Tipul de întoarcere singur nu este suficient pentru diferențierea funcțiilor supraîncărcate. Compilatorul generează eroare dacă două funcții diferă DOAR prin tipul returnat.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Ce este o referință în C++?',
+    opts: [
+      'Un pointer explicit care necesită dereferențiere cu *',
+      'Un pointer implicit, un alias (alt nume) pentru un obiect existent',
+      'O copie a unui obiect',
+      'O variabilă globală cu vizibilitate limitată'
+    ],
+    correct: 1,
+    explanation: 'O referință este un pointer implicit care acționează ca un alt nume al unui obiect. Trebuie inițializată la declarare și nu poate fi modificată să refere alt obiect. Intern sunt tot pointeri, dar mai siguri.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Care este diferența dintre incrementarea unui pointer și incrementarea unei referințe?',
+    opts: [
+      'Nu există nicio diferență',
+      'Incrementarea pointerului trece la alt obiect de același tip; incrementarea referinței incrementează valoarea referită',
+      'Incrementarea pointerului incrementează valoarea; incrementarea referinței trece la alt obiect',
+      'Niciuna nu poate fi incrementată'
+    ],
+    correct: 1,
+    explanation: 'La incrementarea unui pointer, pointerul trece la obiectul următor de același tip (pointer += sizeof(tip)). La incrementarea unei referințe, valoarea obiectului referit este incrementată.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Ce se întâmplă la <code>new</code> dacă alocarea eșuează?',
+    opts: [
+      'Returnează nullptr fără a genera excepție',
+      'Aruncă excepția std::bad_alloc',
+      'Programul se termină automat',
+      'Returnează -1'
+    ],
+    correct: 1,
+    explanation: 'La eșec, new aruncă excepția bad_alloc din <new>. Dacă vrem să evităm excepția, folosim new(nothrow) care returnează nullptr în caz de eșec.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Ce înseamnă <code>const int* p</code> versus <code>int* const p</code>?',
+    opts: [
+      'Ambele sunt identice',
+      'const int* p: valoarea pointată e const; int* const p: pointerul însuși e const',
+      'const int* p: pointerul e const; int* const p: valoarea pointată e const',
+      'Ambele sunt pointeri constanți'
+    ],
+    correct: 1,
+    explanation: '"const" se alătură elementului cel mai apropiat. const int* p (sau int const* p): nu poți modifica valoarea la care pointezi, dar poți modifica p-ul. int* const p: nu poți modifica p (adresa), dar poți modifica valoarea la care pointează.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Unde trebuie să fie amplasate argumentele cu valori implicite în lista de parametri?',
+    opts: [
+      'La începutul listei',
+      'La mijlocul listei',
+      'La sfârșitul listei',
+      'Oriunde în listă'
+    ],
+    correct: 2,
+    explanation: 'Argumentele cu valori implicite trebuie să fie la SFÂRȘITUL listei de parametri. Nu poți avea un argument fără valoare implicită după unul cu valoare implicită.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Ce face keyword-ul <code>mutable</code> în C++?',
+    opts: [
+      'Permite modificarea unui câmp chiar dintr-o funcție membră const',
+      'Declară o variabilă care își schimbă tipul la runtime',
+      'Crează o variabilă statică globală',
+      'Permite moștenirea unui câmp privat'
+    ],
+    correct: 0,
+    explanation: 'mutable permite modificarea unui câmp al clasei chiar și în funcțiile membre declarate const. Util pentru câmpuri de caching/lazy evaluation care nu afectează starea logică a obiectului.'
+  },
+  {
+    cat: 'cpp',
+    q: 'Ce este "name mangling"?',
+    opts: [
+      'O eroare de compilare la supraîncărcarea funcțiilor',
+      'Transformarea numelui supraîncărcat într-un nume unic de către compilator',
+      'Modul în care C++ gestionează moștenirea multiplă',
+      'O tehnică de obfuscare a codului sursă'
+    ],
+    correct: 1,
+    explanation: 'Name mangling (sau name decoration) este procesul prin care compilatorul C++ transformă funcțiile supraîncărcate în nume unice (de obicei bazate pe tipurile parametrilor). Astfel linkerul poate distinge între ele.'
+  },
+
+  // ---- CLASE & OBIECTE ----
+  {
+    cat: 'clase',
+    q: 'Care este diferența dintre <code>struct</code> și <code>class</code> în C++?',
+    opts: [
+      'struct nu poate conține funcții; class poate',
+      'Singura diferență este accesul implicit: struct e public, class e private',
+      'struct nu poate moșteni; class poate',
+      'struct nu poate avea constructor; class poate'
+    ],
+    correct: 1,
+    explanation: 'Singura diferență sintactică dintre struct și class în C++ este accesul implicit: în struct membrii sunt public by default, în class sunt private by default. Ambele pot avea funcții, moștenire, constructori, etc.'
+  },
+  {
+    cat: 'clase',
+    q: 'Ce este o funcție prieten (friend)?',
+    opts: [
+      'O funcție care moștenește toate proprietățile clasei',
+      'O funcție din afara clasei care are acces la membrii private și protected',
+      'O funcție virtuală care poate fi apelată din orice clasă',
+      'O funcție statică care nu are this'
+    ],
+    correct: 1,
+    explanation: 'O funcție friend este declarată în clasă cu cuvântul cheie friend, dar este definită în afara clasei. Are acces la membrii private și protected, dar NU are pointerul this.'
+  },
+  {
+    cat: 'clase',
+    q: 'Pointerul <code>this</code> este prezent în:',
+    opts: [
+      'Toate funcțiile dintr-un program C++',
+      'Funcțiile membre ne-statice ale clasei',
+      'Funcțiile prieten și funcțiile membre statice',
+      'Funcțiile virtuale pure'
+    ],
+    correct: 1,
+    explanation: 'this este prezent în funcțiile membre ne-statice (non-static). Funcțiile prieten (friend) și funcțiile membre statice (static) NU au pointerul this.'
+  },
+  {
+    cat: 'clase',
+    q: 'Ce este o variabilă de instanță statică?',
+    opts: [
+      'O variabilă locală care persistă între apeluri',
+      'O variabilă care există o singură copie, partajată de toate obiectele clasei',
+      'O variabilă const care nu se poate modifica',
+      'O variabilă accesibilă doar din funcții statice'
+    ],
+    correct: 1,
+    explanation: 'O variabilă de instanță statică (static data member) are o singură copie pentru toate obiectele clasei. Există independent de obiectele clasei și trebuie definită și inițializată în afara clasei (ex: int A::count = 0;).'
+  },
+  {
+    cat: 'clase',
+    q: 'Care dintre următoarele este o restricție a funcțiilor membre statice?',
+    opts: [
+      'Nu pot returna valori',
+      'Nu pot fi apelate fără crearea unui obiect',
+      'Nu au pointerul this și nu pot accesa date nestatice ale clasei direct',
+      'Nu pot fi declarate cu modificatorul public'
+    ],
+    correct: 2,
+    explanation: 'Funcțiile statice NU au pointerul this. De aceea nu pot accesa direct date membre nestatice (care sunt specifice unui anumit obiect). Pot fi apelate fără obiect: ClassName::metodaStatica().'
+  },
+  {
+    cat: 'clase',
+    q: 'Ce se întâmplă când facem <code>union</code> în C++?',
+    opts: [
+      'Toți membrii au spații separate de memorie',
+      'Toți membrii folosesc aceeași locație de memorie',
+      'Membrii privați sunt separați, cei publici partajați',
+      'Memoria este alocată dinamic la runtime'
+    ],
+    correct: 1,
+    explanation: 'Într-un union, toți membrii ocupă ACEEAȘI locație de memorie. Dimensiunea unui union = dimensiunea celui mai mare câmp. Un union nu poate moșteni, nu poate fi moștenită, nu are funcții virtuale.'
+  },
+  {
+    cat: 'clase',
+    q: 'Ce operator se folosește pentru definirea metodelor în afara clasei?',
+    opts: [
+      'Operatorul de atribuire =',
+      'Operatorul de rezoluție de scop ::',
+      'Operatorul de acces prin pointer ->',
+      'Operatorul de adresare &'
+    ],
+    correct: 1,
+    explanation: 'Operatorul de rezoluție de scop :: (scope resolution operator) se folosește pentru a defini o funcție membră în afara clasei: void ClassName::metodaName() { ... }'
+  },
+
+  // ---- CONSTRUCTORI ----
+  {
+    cat: 'clase',
+    q: 'Câte tipuri de constructori oferă compilatorul implicit pentru orice clasă?',
+    opts: [
+      '1 (default constructor)',
+      '2 (default + copy)',
+      '4 (default + copy + destructor + operator=)',
+      '3 (default + copy + destructor)'
+    ],
+    correct: 2,
+    explanation: 'Compilatorul generează implicit: constructor de inițializare (default, fără parametri), constructor de copiere, destructor și operator de atribuire =. Dacă definim oricare dintre acestea, compilatorul poate nu le mai genereze pe cele implicite.'
+  },
+  {
+    cat: 'clase',
+    q: 'Constructorul de copiere implicit realizează:',
+    opts: [
+      'O copiere profundă (deep copy) a tuturor câmpurilor',
+      'O copiere superficială (shallow copy) — copiere bit cu bit',
+      'Alocă memorie nouă pentru toate câmpurile',
+      'Nu copiază nimic, creează un obiect gol'
+    ],
+    correct: 1,
+    explanation: 'Constructorul de copiere implicit realizează o copiere superficială (shallow/bitwise copy). Problemă la câmpuri pointer: ambele obiecte vor pointa spre aceeași zonă de memorie. La distrugere: double free!'
+  },
+  {
+    cat: 'clase',
+    q: 'Constructorul de copiere se apelează la:',
+    opts: [
+      'Atribuire între obiecte existente (a = b)',
+      'Inițializare cu alt obiect, apel prin valoare, returnare prin valoare',
+      'Apelul destructorului',
+      'Alocarea dinamică cu new'
+    ],
+    correct: 1,
+    explanation: 'Constructorul de copiere se apelează la: MyClass B = A (inițializare), apel de funcție cu obiect prin valoare, returnare din funcție a unui obiect prin valoare. Atribuirea a = b unde ambele există deja apelează operator=.'
+  },
+  {
+    cat: 'clase',
+    q: 'Care este ordinea apelării constructorilor la crearea unui obiect al unei clase derivate D care moștenește din B și are câmp de tip A?',
+    opts: [
+      'Constructor D, Constructor B, Constructor A',
+      'Constructor A, Constructor B, Constructor D',
+      'Constructor B, Constructor A, Constructor D',
+      'Constructor A, Constructor D, Constructor B'
+    ],
+    correct: 2,
+    explanation: 'Ordinea este: 1) Constructor clasa de bază (B), 2) Constructorii câmpurilor membre (A, în ordinea declarării), 3) Constructor propriu (D). Destructorii în ordine inversă.'
+  },
+  {
+    cat: 'clase',
+    q: 'Ce este lista de inițializare a constructorilor și când este obligatorie?',
+    opts: [
+      'O listă de valori implicite, obligatorie pentru toți parametrii',
+      'Sintaxă pentru inițializarea câmpurilor înainte de corpul constructorului; obligatorie pentru câmpuri const, referințe și sub-obiecte fără constructor default',
+      'O listă de tipuri acceptate ca parametri; obligatorie întotdeauna',
+      'O modalitate de a apela alte funcții membre; obligatorie în clase derivate'
+    ],
+    correct: 1,
+    explanation: 'Lista de inițializare (ClassName::ctor(params) : camp1(val1), camp2(val2) {}) este obligatorie pentru: câmpuri const, câmpuri de tip referință, sub-obiecte (incluzând clasa de bază) care nu au constructor default.'
+  },
+  {
+    cat: 'clase',
+    q: 'Caracteristicile constructorilor față de funcțiile normale:',
+    opts: [
+      'Constructorii returnează obligatoriu void',
+      'Constructorii nu au tip de întoarcere (nici void), au numele clasei și pot fi supraîncărcați',
+      'Constructorii pot fi moșteniți și au tip de întoarcere implicit int',
+      'Constructorii nu pot avea parametri'
+    ],
+    correct: 1,
+    explanation: 'Constructorii: au numele clasei, NU au tip de întoarcere (nici void), pot fi supraîncărcați, nu pot fi moșteniți implicit (până în C++11), nu se pot crea pointeri la ei, se pot apela cu valori implicite.'
+  },
+
+  // ---- MOSTENIRE ----
+  {
+    cat: 'mostenire',
+    q: 'Ce se întâmplă cu membrii private ai clasei de bază la moștenire?',
+    opts: [
+      'Devin protected în clasa derivată',
+      'Devin public în clasa derivată',
+      'Rămân private și INACCESIBILI direct în clasa derivată, indiferent de tipul moștenirii',
+      'Nu sunt moșteniți deloc'
+    ],
+    correct: 2,
+    explanation: 'Membrii private ai clasei de bază sunt întotdeauna inaccesibili DIRECT în clasa derivată, indiferent de tipul moștenirii (public/protected/private). Există în obiect dar nu pot fi accesați direct.'
+  },
+  {
+    cat: 'mostenire',
+    q: 'La moștenire public, cum devin membrii clasei de bază în clasa derivată?',
+    opts: [
+      'Toți devin private',
+      'Toți devin protected',
+      'Membrii publici rămân publici, protected rămân protected, private rămân inaccesibili',
+      'Toți devin publici'
+    ],
+    correct: 2,
+    explanation: 'La moștenire public: public → public, protected → protected, private → inaccesibil. La moștenire protected: public → protected, protected → protected, private → inaccesibil. La moștenire private: public → private, protected → private, private → inaccesibil.'
+  },
+  {
+    cat: 'mostenire',
+    q: 'Ce este problema diamantului și cum se rezolvă?',
+    opts: [
+      'O clasă moștenește de două ori din aceeași clasă de bază, rezultând câmpuri duplicate. Se rezolvă cu moștenire virtuală.',
+      'O clasă nu poate accesa câmpurile protected ale clasei de bază. Se rezolvă cu friend.',
+      'Destructorii nu se apelează corect. Se rezolvă cu destructori virtuali.',
+      'Constructorii de copiere intră în conflict. Se rezolvă redefinind operatorul =.'
+    ],
+    correct: 0,
+    explanation: 'Problema diamantului: D moștenește din D1 și D2, ambele moștenind din B. D va avea DOUĂ copii ale membrilor din B. Soluție: D1 și D2 moștenesc virtual din B → compilatorul alocă o singură copie.'
+  },
+  {
+    cat: 'mostenire',
+    q: 'La redefinirea unei funcții din clasa de bază în clasa derivată, ce se întâmplă cu celelalte versiuni supraîncărcate?',
+    opts: [
+      'Toate versiunile rămân accesibile',
+      'Numai versiunea cu același antet este ascunsă',
+      'TOATE celelalte versiuni supraîncărcate ale acelei funcții din bază sunt automat ASCUNSE',
+      'Versiunile cu alt număr de parametri rămân accesibile, cele cu același număr se ascund'
+    ],
+    correct: 2,
+    explanation: 'La redefinirea oricărei versiuni a unei funcții din clasa de bază, TOATE celelalte versiuni supraîncărcate ale acelei funcții din baza devin automat ascunse în clasa derivată. Exemplu: dacă baza are f() și f(int), iar derivata redefinește f(int), atunci f() din baza e ascuns.'
+  },
+  {
+    cat: 'mostenire',
+    q: 'Ce este upcasting?',
+    opts: [
+      'Conversia unui tip primitiv la un tip de clasă',
+      'Tratarea unui obiect derivat ca un obiect al clasei de bază (sigur, implicit)',
+      'Conversia unui obiect de tip bază la un tip derivat (periculos)',
+      'Apelul unui constructor al clasei de bază din clasa derivată'
+    ],
+    correct: 1,
+    explanation: 'Upcasting = conversia de la tipul derivat la tipul de bază (pointer/referință de tip baza pointează la obiect derivat). Este sigur și implicit. Downcasting (baza → derivata) este periculos și necesită cast explicit (dynamic_cast recomandat).'
+  },
+  {
+    cat: 'mostenire',
+    q: 'Ce funcții NU se moștenesc automat (implicit) în C++?',
+    opts: [
+      'Funcțiile publice și protected',
+      'Constructorii, destructorii și operatorul =',
+      'Funcțiile inline',
+      'Funcțiile statice'
+    ],
+    correct: 1,
+    explanation: 'Constructorii, destructorii și operatorul = NU se moștenesc automat. Fiecare clasă trebuie să definească propriul constructor și destructor. Operatorul = este similar cu un constructor (poate refolosi resurse alocate). Din C++11, constructorii se pot moșteni explicit cu using.'
+  },
+
+  // ---- VIRTUAL ----
+  {
+    cat: 'virtual',
+    q: 'Cum funcționează mecanismul late binding în C++?',
+    opts: [
+      'Prin un tabel de salturi (jump table) generat la compilare',
+      'Prin vptr (pointer la vtable) stocat în fiecare obiect; la apel se merge vptr → vtable → funcție',
+      'Prin name mangling la link time',
+      'Prin utilizarea funcțiilor lambda'
+    ],
+    correct: 1,
+    explanation: 'Late binding: fiecare clasă cu funcții virtuale are o vtable (tabelă cu adresele funcțiilor virtuale). Fiecare obiect are un vptr (inițializat în constructor) care pointează la vtable-ul clasei. La apel: se urmărește vptr → vtable → funcție corectă.'
+  },
+  {
+    cat: 'virtual',
+    q: 'Ce este o clasă abstractă?',
+    opts: [
+      'O clasă fără constructori',
+      'O clasă care are cel puțin o funcție virtuală pură (= 0)',
+      'O clasă cu toți membrii privați',
+      'O clasă care nu poate fi folosită ca bază'
+    ],
+    correct: 1,
+    explanation: 'O clasă abstractă are cel puțin o funcție virtuală pură (virtual tip functie(params) = 0). Nu se pot instanția obiecte din ea, dar se pot crea pointeri și referințe. Dacă o clasă derivată nu definește toate funcțiile pure, ea rămâne abstractă.'
+  },
+  {
+    cat: 'virtual',
+    q: 'De ce trebuie destructorul să fie virtual dacă facem upcasting?',
+    opts: [
+      'Nu trebuie, destructorul se apelează întotdeauna corect',
+      'Fără destructor virtual, la delete pe pointer de baza se apelează doar destructorul bazei, nu cel al derivatei → memory leak',
+      'Cu destructor virtual se apelează doar destructorul derivatei',
+      'Destructorul virtual este necesar doar pentru clase abstracte'
+    ],
+    correct: 1,
+    explanation: 'Dacă Base *p = new Derived; delete p; și ~Base nu e virtual → se apelează DOAR ~Base, nu ~Derived. Resurse alocate în Derived (memorie, fișiere) nu se eliberează. Cu virtual ~Base: se apelează ~Derived() și apoi ~Base().'
+  },
+  {
+    cat: 'virtual',
+    q: 'Se pot apela funcții virtuale în constructori?',
+    opts: [
+      'Da, apelul funcției virtuale se rezolvă prin vtable și apelează versiunea din clasa cea mai derivată',
+      'Nu, nu există funcții virtuale în constructori',
+      'Tehnic da, dar apelul folosește versiunea LOCALĂ (din clasa curentă), nu din derivată — early binding în constructori',
+      'Da, dar numai funcții virtuale pure'
+    ],
+    correct: 2,
+    explanation: 'La apelul unei funcții virtuale din constructor/destructor, se folosește versiunea LOCALĂ (early binding). De ce? La momentul constructorului bazei, vptr-ul este al bazei (obiectul derivat nu e complet). Aceasta poate cauza confuzie — evitați apelarea funcțiilor virtuale în constructori.'
+  },
+  {
+    cat: 'virtual',
+    q: 'Ce este object slicing?',
+    opts: [
+      'Tăierea unui șir de caractere la o lungime maximă',
+      'Pierderea informației specifice clasei derivate când un obiect derivat este copiat ca un obiect al clasei de bază',
+      'Ștergerea unui obiect din memorie parțial',
+      'Supraîncărcarea operatorului [] pentru a accesa elemente individuale'
+    ],
+    correct: 1,
+    explanation: 'Object slicing apare când un obiect derivat este copiat PRIN VALOARE într-o variabilă de tip baza. Partea derivată "se taie" (sliced off). Funcțiile virtuale nu mai funcționează corect. Soluție: transmiteri prin referință/pointer sau clase abstracte.'
+  },
+  {
+    cat: 'virtual',
+    q: 'Ce face cuvântul cheie <code>override</code> în C++11?',
+    opts: [
+      'Forțează o funcție să fie virtuală pură',
+      'Indică explicit că o funcție suprascrie o funcție virtuală din baza; generează eroare la compilare dacă nu există funcție corespunzătoare în baza',
+      'Permite apelul funcției din clasa de baza direct',
+      'Dezactivează late binding pentru funcția respectivă'
+    ],
+    correct: 1,
+    explanation: 'override (C++11) indică că o funcție intenționează să suprascrie o funcție virtuală din clasa de baza. Dacă nu există o funcție cu acea semnătură în baza (sau nu e virtuală), compilatorul generează eroare. Previne greșeli subtile.'
+  },
+  {
+    cat: 'virtual',
+    q: 'dynamic_cast returnează ce valoare când conversia eșuează pentru pointeri?',
+    opts: [
+      '0 (nullptr)',
+      'Aruncă excepție std::bad_cast',
+      'Returnează un pointer invalid (nedefinit)',
+      'Returnează pointerul original neconvertit'
+    ],
+    correct: 0,
+    explanation: 'dynamic_cast pentru pointeri returnează nullptr (0) dacă conversia eșuează. dynamic_cast pentru referințe aruncă std::bad_cast. Necesită că clasa să aibă cel puțin o funcție virtuală (vtable).'
+  },
+  {
+    cat: 'virtual',
+    q: 'De ce funcțiile virtuale nu pot fi inline?',
+    opts: [
+      'Restricție arbitrară a standardului C++',
+      'Pentru funcțiile inline nu se generează cod separat și nu există adresă de funcție; vtable-ul necesită adresa funcției',
+      'Funcțiile inline sunt implicit statice',
+      'Funcțiile virtuale necesită mai mult spațiu decât inline permite'
+    ],
+    correct: 1,
+    explanation: 'Funcțiile virtuale necesită o adresă stocată în vtable. Funcțiile inline sunt expandate de compilator la locul apelului și nu generează cod propriu cu adresă separată. De aceea, funcțiile virtuale nu pot beneficia de inline (sau beneficiul este limitat).'
+  },
+
+  // ---- EXCEPTII ----
+  {
+    cat: 'exceptii',
+    q: 'Care este ordinea corectă a blocurilor catch pentru ierarhia de excepții?',
+    opts: [
+      'Catch pentru tipul de baza primul, catch pentru tipul derivat după',
+      'Catch pentru tipul derivat primul, catch pentru tipul de baza după',
+      'Ordinea nu contează',
+      'Catch pentru cel mai general (catch(...)) primul'
+    ],
+    correct: 1,
+    explanation: 'Blocurile catch sunt verificate în ordine. Dacă punem tipul de baza primul, el va prinde și excepțiile de tipul derivat (upcasting). Catch-ul pentru tipul derivat nu se va mai executa niciodată. Ordinea corectă: tipul derivat PRIMUL.'
+  },
+  {
+    cat: 'exceptii',
+    q: 'Ce se întâmplă dacă o excepție este aruncată și nu există un catch corespunzător?',
+    opts: [
+      'Excepția este ignorată și programul continuă',
+      'Programul se termină prin apelul funcției terminate()',
+      'Excepția este retransformată în cod de eroare',
+      'Se apelează automat constructorul default'
+    ],
+    correct: 1,
+    explanation: 'Dacă nu există niciun catch care să prindă excepția aruncată, programul se termină prin apelul funcției terminate(). Această funcție poate fi redefinită. Comportamentul implicit este apelul abort().'
+  },
+  {
+    cat: 'exceptii',
+    q: 'Prin ce se recomandă prinderea excepțiilor?',
+    opts: [
+      'Prin valoare (catch(ExceptieType e))',
+      'Prin pointer (catch(ExceptieType* e))',
+      'Prin referință (catch(ExceptieType& e)) — sau const referință dacă nu modificăm',
+      'Prin referință const numai (catch(const ExceptieType e))'
+    ],
+    correct: 2,
+    explanation: 'Se recomandă prinderea prin referință (catch(ExceptieType& e)) pentru a evita: copierea inutilă a obiectului excepție, object slicing (la ierarhii de excepții). Dacă nu modificăm excepția: catch(const ExceptieType& e).'
+  },
+  {
+    cat: 'exceptii',
+    q: 'Ce face instrucțiunea <code>throw;</code> (fără argument) într-un bloc catch?',
+    opts: [
+      'Aruncă o excepție nouă de tip default',
+      'Re-aruncă excepția curentă fără a face o copie',
+      'Aruncă 0 (nullptr)',
+      'Termină programul imediat'
+    ],
+    correct: 1,
+    explanation: 'throw; (fără argument) dintr-un bloc catch re-aruncă excepția curentă fără a face o copie (nu face object slicing). Util pentru handlere care procesează parțial și lasă altcineva să trateze mai departe.'
+  },
+  {
+    cat: 'exceptii',
+    q: 'Ce clasă trebuie să fie baza ierarhiei de excepții personalizate conform bunelor practici?',
+    opts: [
+      'std::exception sau o clasă derivată din ea (std::runtime_error, std::logic_error)',
+      'Orice clasă cu metoda what()',
+      'Nu trebuie moștenire, orice clasă poate fi aruncată',
+      'Trebuie să moștenească din std::exception doar dacă are mesaj de eroare'
+    ],
+    correct: 0,
+    explanation: 'Buna practică: excepțiile personalizate trebuie să moștenească din std::exception (direct sau indirect, prin std::runtime_error sau std::logic_error). Astfel, codul apelant poate prinde toate excepțiile cu catch(std::exception& e).'
+  },
+
+  // ---- STL ----
+  {
+    cat: 'stl',
+    q: 'Care sunt cele trei componente principale ale STL?',
+    opts: [
+      'Clase, Obiecte, Metode',
+      'Containere, Iteratori, Algoritmi',
+      'Vectori, Liste, Map-uri',
+      'Șabloane, Funcții, Structuri'
+    ],
+    correct: 1,
+    explanation: 'STL se bazează pe trei componente principale: Containere (stochează date: vector, list, map, etc.), Iteratori (gestionează poziția în container), și Algoritmi (funcții template: sort, find, copy, etc.).'
+  },
+  {
+    cat: 'stl',
+    q: 'Care container STL este mai potrivit pentru inserări/ștergeri frecvente la mijloc?',
+    opts: [
+      'vector (acces O(1) prin index)',
+      'list (inserare/ștergere O(1) cu iterator)',
+      'map (logaritmic)',
+      'stack (LIFO)'
+    ],
+    correct: 1,
+    explanation: 'list (lista dublu înlănțuită) are inserare și ștergere O(1) pe orice poziție dacă deja ai un iterator la acea poziție. vector necesită O(n) la inserare la mijloc (trebuie să mute elementele).'
+  },
+  {
+    cat: 'stl',
+    q: 'Ce containerele STL adaptoare (stack, queue, priority_queue) NU oferă?',
+    opts: [
+      'Metoda push()',
+      'Metoda pop()',
+      'Iterator',
+      'Metoda empty()'
+    ],
+    correct: 2,
+    explanation: 'Adaptoarele de containere (stack, queue, priority_queue) NU oferă iterator! Ele încapsulează un container de tip secvență și expun doar interfața specifică (push, pop, top/front/back, empty, size).'
+  },
+  {
+    cat: 'stl',
+    q: 'Diferența dintre <code>map</code> și <code>unordered_map</code>:',
+    opts: [
+      'map e mai rapid la căutare; unordered_map menține ordinea',
+      'map menține ordinea (BST, O(log n)); unordered_map nu menține ordinea dar e O(1) mediu la căutare (hash table)',
+      'map acceptă chei duplicate; unordered_map nu',
+      'Nu există diferențe semnificative'
+    ],
+    correct: 1,
+    explanation: 'map: implementat cu BST balansat, menține ordinea cheilor, O(log n) la căutare/inserare. unordered_map: implementat cu hash table, NU menține ordinea, O(1) mediu la căutare/inserare (O(n) în worst case).'
+  },
+  {
+    cat: 'stl',
+    q: 'Ce se întâmplă dacă accesezi o cheie inexistentă în map cu <code>operator[]</code>?',
+    opts: [
+      'Se aruncă o excepție std::out_of_range',
+      'Returnează o valoare default și INSEREAZĂ perechea cheie-valoare în map',
+      'Returnează nullptr',
+      'Comportament nedefinit'
+    ],
+    correct: 1,
+    explanation: 'operator[] din map: dacă cheia nu există, O INSEREAZĂ cu valoarea default a tipului de valoare și returnează referință la ea. Dacă nu vrei inserare la access, folosește find() sau contains() (C++20).'
+  },
+  {
+    cat: 'stl',
+    q: 'Care este complexitatea temporală a accesului aleator prin index la un <code>vector</code>?',
+    opts: [
+      'O(log n)',
+      'O(n)',
+      'O(1) — timp constant',
+      'O(n²)'
+    ],
+    correct: 2,
+    explanation: 'vector stochează elemente în memorie contiguă. Accesul la orice poziție prin index (v[i]) este O(1) — constant, similar cu un array C. Adăugarea la final (push_back) este O(1) amortizat.'
+  },
+  {
+    cat: 'stl',
+    q: 'Iteratorul unui container STL returnează valoarea <code>end()</code> ce reprezintă?',
+    opts: [
+      'Adresa ultimului element',
+      'O valoare care indică eroarea',
+      'Adresa de DUPĂ ultimul element (sentinel value)',
+      'Adresa primului element'
+    ],
+    correct: 2,
+    explanation: 'end() returnează un iterator care pointează DUPĂ ultimul element (nu la ultimul!). Este o convenție STL: intervalele sunt [begin, end) — inclusiv begin, exclusiv end. La find() dacă nu găsim elementul, returnează end().'
+  },
+  {
+    cat: 'stl',
+    q: 'Ce șablon (template) folosesc containerele STL?',
+    opts: [
+      'Nu folosesc template-uri',
+      'Folosesc template-uri pentru a fi generice — funcționează cu orice tip de date',
+      'Folosesc template-uri doar pentru tipuri primitive',
+      'Folosesc template-uri doar pentru moștenire'
+    ],
+    correct: 1,
+    explanation: 'Aproape toate clasele din STL sunt parametrizate (template). De exemplu: vector<int>, vector<string>, map<string, int>. Aceasta permite același cod să funcționeze cu orice tip de date care satisface cerințele (concepte în C++20).'
+  }
+];
+
+// ====== QUIZ LOGIC ======
+let currentFilter = 'all';
+let answeredMap = {};
+let correctMap = {};
+
+function filterQuiz(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderQuiz();
+}
+
+function getFilteredQuestions() {
+  if(currentFilter === 'all') return questions;
+  return questions.filter(q => q.cat === currentFilter);
+}
+
+function renderQuiz() {
+  const qs = getFilteredQuestions();
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  document.getElementById('totalCount').textContent = qs.length;
+  updateProgress(qs);
+
+  qs.forEach((q, idx) => {
+    const globalIdx = questions.indexOf(q);
+    const isAnswered = answeredMap[globalIdx] !== undefined;
+    const isCorrect = correctMap[globalIdx];
+    const card = document.createElement('div');
+    card.className = 'q-card' + (isAnswered ? (isCorrect ? ' answered-correct' : ' answered-wrong') : '');
+    card.id = 'qcard-' + globalIdx;
+
+    const optionsHTML = q.opts.map((opt, oi) => {
+      let cls = 'option';
+      let icon = '◯';
+      if(isAnswered) {
+        cls += ' disabled';
+        const chosenOpt = answeredMap[globalIdx];
+        if(oi === q.correct) { cls += ' correct'; icon = '✓'; }
+        else if(oi === chosenOpt && oi !== q.correct) { cls += ' wrong'; icon = '✗'; }
+      }
+      return `<div class="${cls}" onclick="${isAnswered ? '' : `pickOption(${globalIdx}, ${oi})`}">
+        <span class="option-icon">${icon}</span> ${opt}
+      </div>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="q-num">${q.cat.toUpperCase()} · Întrebarea ${idx + 1} din ${qs.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${globalIdx}">${optionsHTML}</div>
+      <div class="explanation ${isAnswered ? 'show' : ''}" id="exp-${globalIdx}">
+        💡 ${q.explanation}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function pickOption(globalIdx, optionIdx) {
+  const q = questions[globalIdx];
+  answeredMap[globalIdx] = optionIdx;
+  correctMap[globalIdx] = (optionIdx === q.correct);
+
+  const card = document.getElementById('qcard-' + globalIdx);
+  card.classList.add(correctMap[globalIdx] ? 'answered-correct' : 'answered-wrong');
+
+  const optsDiv = document.getElementById('opts-' + globalIdx);
+  optsDiv.querySelectorAll('.option').forEach((el, oi) => {
+    el.classList.add('disabled');
+    el.onclick = null;
+    const icon = el.querySelector('.option-icon');
+    if(oi === q.correct) { el.classList.add('correct'); icon.textContent = '✓'; }
+    else if(oi === optionIdx && oi !== q.correct) { el.classList.add('wrong'); icon.textContent = '✗'; }
+  });
+
+  document.getElementById('exp-' + globalIdx).classList.add('show');
+  updateProgress(getFilteredQuestions());
+}
+
+function updateProgress(qs) {
+  const answered = qs.filter(q => answeredMap[questions.indexOf(q)] !== undefined).length;
+  const correct = qs.filter(q => correctMap[questions.indexOf(q)] === true).length;
+  const wrong = answered - correct;
+  document.getElementById('answeredCount').textContent = answered;
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+  const pct = qs.length > 0 ? (answered / qs.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function resetQuiz() {
+  answeredMap = {};
+  correctMap = {};
+  renderQuiz();
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  renderQuiz();
+});
+renderQuiz();
+</script>
+</body>
+</html>
