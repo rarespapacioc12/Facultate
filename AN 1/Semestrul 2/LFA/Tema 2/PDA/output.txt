@@ -1,23 +1,28 @@
-Cuvant: aabb
+Cuvant: abba
 _ q0 Z
-a q0 Za
-aa q0 Zaa
-aab q1 Za
-aabb q1 Z
-aabb q1 _
+a q0 ZA
+ab q0 ZAB
+abb q1 ZA
+abba q1 Z
+abba q2 _
 -> Word accepted.
 
-Cuvant: ab
+Cuvant: aabbaa
 _ q0 Z
-a q0 Za
-ab q1 Z
-ab q1 _
+a q0 ZA
+aa q0 ZAA
+aab q0 ZAAB
+aabb q1 ZAA
+aabba q1 ZA
+aabbaa q1 Z
+aabbaa q2 _
 -> Word accepted.
 
-Cuvant: aab
+Cuvant: aaba
 _ q0 Z
-a q0 Za
-aa q0 Zaa
-aab q1 Za
--> Word rejected. (ultima cale explorata inainte de blocaj)
+a q0 ZA
+aa q0 ZAA
+aab q0 ZAAB
+aaba q0 ZAABA
+-> Word rejected. (ultimul drum explorat)
 

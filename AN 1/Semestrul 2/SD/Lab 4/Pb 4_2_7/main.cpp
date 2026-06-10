@@ -13,6 +13,8 @@ I know that after worker i the following are true:
 - if I am to take him, I need to have selected at most low_i workers in the range [0, i - 1]
 
 I will be doing a binary search on the team size
+
+Furthermore, I used AI to generate me a nice markdown so you can test the code=)))
 */
 
 #include <fstream>
@@ -36,9 +38,9 @@ std::ifstream fin("workers.in");
 std::ofstream fout("workers.out");
 
 bool check(int mid){
-    std::vector<std::pair<int, int> > workers;
+    std::vector<std::pair<int, int>> workers;
 
-    for(int i = 0; i < n; ++i){
+    for (int i = 0; i < n; ++i) {
         int L = std::max(1, mid - v[i].high);
         int R = std::min(mid, v[i].low + 1);
         if (L <= R) {
@@ -46,24 +48,24 @@ bool check(int mid){
         }
     }
 
-    if(workers.size() < mid){
+    if (workers.size() < mid) {
         return false;
     }
     
     std::sort(workers.begin(), workers.end());
 
-    std::priority_queue<int, std::vector<int>, std::greater<int> > pq;
+    std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
     int idx = 0;
 
-    for(int i = 1; i <= mid; ++i){
-        while(idx < workers.size() && workers[idx].first <= i){
+    for (int i = 1; i <= mid; ++i) {
+        while (idx < workers.size() && workers[idx].first <= i) {
             pq.push(workers[idx].second);
             ++idx;
         }
-        while(!pq.empty() && pq.top() < i){
+        while (!pq.empty() && pq.top() < i) {
             pq.pop();
         }
-        if(pq.empty()){
+        if (pq.empty()) {
             return false;
         }
         pq.pop();

@@ -1,0 +1,8 @@
+R S T X
+a b
+R
+4
+R -> X R X | S
+S -> a T b | b T a
+T -> X T X | X | _
+X -> a | b

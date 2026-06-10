@@ -1,0 +1,255 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.quiz-wrap{padding:1.5rem 0}
+.progress-bar{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1.5rem}
+.progress-fill{height:4px;background:#534AB7;border-radius:2px;transition:width 0.3s}
+.score-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;font-size:13px;color:var(--color-text-secondary)}
+.score-num{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.section-badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:0.75rem;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.q-num{font-size:12px;color:var(--color-text-secondary);margin-bottom:0.4rem}
+.q-text{font-size:15px;font-weight:500;color:var(--color-text-primary);line-height:1.55;margin-bottom:1rem}
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size:14px;color:var(--color-text-primary);background:var(--color-background-primary);transition:border-color 0.15s,background 0.15s}
+.opt:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.opt.selected{border-color:#534AB7;background:#EEEDFE;color:#3C3489}
+.opt.correct{border-color:#0F6E56;background:#E1F5EE;color:#085041}
+.opt.wrong{border-color:#993C1D;background:#FAECE7;color:#712B13}
+.opt.missed{border-color:#0F6E56;background:#E1F5EE;color:#085041;opacity:0.7}
+.opt-letter{font-weight:500;min-width:18px;font-size:13px}
+.tf-opts{display:flex;gap:10px;margin-bottom:1.25rem}
+.tf-btn{flex:1;padding:10px 0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size:14px;font-weight:500;background:var(--color-background-primary);color:var(--color-text-primary);transition:all 0.15s}
+.tf-btn:hover{background:var(--color-background-secondary)}
+.tf-btn.selected{border-color:#534AB7;background:#EEEDFE;color:#3C3489}
+.tf-btn.correct{border-color:#0F6E56;background:#E1F5EE;color:#085041}
+.tf-btn.wrong{border-color:#993C1D;background:#FAECE7;color:#712B13}
+.tf-btn.missed{border-color:#0F6E56;background:#E1F5EE;color:#085041;opacity:0.7}
+.feedback{font-size:13px;padding:10px 14px;border-radius:var(--border-radius-md);margin-bottom:1rem;line-height:1.5}
+.feedback.ok{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5}
+.feedback.nok{background:#FAECE7;color:#712B13;border:0.5px solid #F0997B}
+.multi-hint{font-size:12px;color:var(--color-text-secondary);margin-bottom:0.75rem}
+.nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{padding:9px 20px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:14px;font-weight:500;background:var(--color-background-primary);color:var(--color-text-primary);transition:all 0.15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:#534AB7;border-color:#534AB7;color:#fff}
+.btn.primary:hover{background:#3C3489}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0}
+.final-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:2rem;text-align:center}
+.final-score{font-size:48px;font-weight:500;color:#534AB7;line-height:1}
+.final-label{font-size:14px;color:var(--color-text-secondary);margin-top:0.5rem;margin-bottom:1.5rem}
+.stat-row{display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem}
+.stat{text-align:center}
+.stat-n{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-l{font-size:12px;color:var(--color-text-secondary)}
+</style>
+<h2 class="sr-only">Quiz POO — 100 întrebări grilă și 20 adevărat/fals</h2>
+<div class="quiz-wrap" id="app"></div>
+<script>
+const QUESTIONS = [
+{s:"Grilă — Variabile și metode statice",t:"Care dintre următoarele afirmații despre variabilele statice sunt corecte?",o:["Există câte o copie a variabilei pentru fiecare obiect instanțiat","Există o singură copie a variabilei pentru toată clasa","Pot fi accesate fără a instanția un obiect, prin operatorul de rezoluție","O variabilă statică declarată în clasă are automat zonă de memorie alocată"],a:[1,2],multi:true},
+{s:"Grilă — Variabile și metode statice",t:"Ce cuvânt-cheie precedă o variabilă statică?",o:["virtual","static","const","extern"],a:[1],multi:false},
+{s:"Grilă — Variabile și metode statice",t:"Unde se redeclarează (definește) o variabilă statică a unei clase, în C++?",o:["În interiorul clasei, după declarație","În exteriorul clasei, folosind operatorul de rezoluție","Numai în constructori","Numai în funcții friend"],a:[1],multi:false},
+{s:"Grilă — Variabile și metode statice",t:"Care dintre afirmațiile despre metodele statice sunt adevărate?",o:["Pot opera pe variabile nestatice ale clasei","Nu au pointer *this","Pot fi virtuale","Nu pot coexista cu o variantă nestatică cu același nume"],a:[1,3],multi:true},
+{s:"Grilă — Variabile și metode statice",t:"La ce se folosesc variabilele statice (exemplu uzual)?",o:["Pentru a stoca date temporare pe stivă","Pentru a reține numărul de instanțe ale unui obiect","Pentru supraîncărcarea operatorilor","Pentru returnarea prin referință"],a:[1],multi:false},
+{s:"Grilă — Transfer parametri",t:"La transferul prin valoare, parametrul formal este:",o:["Același obiect ca parametrul actual","O copie locală creată pe stivă","O referință constantă","Un pointer la parametrul actual"],a:[1],multi:false},
+{s:"Grilă — Transfer parametri",t:"Care dintre variantele de mai jos reprezintă sintaxa corectă pentru transfer prin referință?",o:["int suma(int a, int b)","void suma(int *S, int a, int b)","void suma(int &S, int a, int b)","int suma(const int a)"],a:[2],multi:false},
+{s:"Grilă — Transfer parametri",t:"Ce avantaj are transmiterea obiectelor prin referință față de transmiterea prin valoare?",o:["Se alocă mai multă memorie","Nu se mai apelează copy-constructorul și nici destructorul","Se pot transmite expresii ca argumente","Se creează obiecte temporare suplimentare"],a:[1],multi:false},
+{s:"Grilă — Transfer parametri",t:"La transferul prin referință, ce restricție există față de transferul prin valoare?",o:["Nu pot apărea expresii ca argumente, ci doar variabile","Nu pot fi transmise pointeri","Nu pot fi transmise tipuri primitive","Argumentele trebuie să fie constante"],a:[0],multi:false},
+{s:"Grilă — Transfer parametri",t:"Dacă un parametru este o referință constantă (const &), ce se garantează?",o:["Variabila transmisă nu va fi modificată în funcție","Funcția nu poate fi apelată","Se creează o copie pe heap","Funcția devine virtuală"],a:[0],multi:false},
+{s:"Grilă — Incluziune vs moștenire",t:"Ce descrie cel mai bine incluziunea de clase?",o:["O clasă este creată prin preluarea tuturor elementelor altei clase","O clasă conține câmpuri de date de tipul altor clase","Clasa derivată adaugă metode noi","Clasa de bază nu poate fi instanțiată"],a:[1],multi:false},
+{s:"Grilă — Incluziune vs moștenire",t:"La moștenire publică (public), un câmp public din clasa de bază devine în subclasă:",o:["private","protected","public","inaccesibil"],a:[2],multi:false},
+{s:"Grilă — Incluziune vs moștenire",t:"La moștenire privată (private), un câmp protected din clasa de bază devine în subclasă:",o:["protected","public","private","inaccesibil"],a:[2],multi:false},
+{s:"Grilă — Incluziune vs moștenire",t:"La moștenire protejată (protected), un câmp public din clasa de bază devine în subclasă:",o:["public","protected","private","inaccesibil"],a:[1],multi:false},
+{s:"Grilă — Incluziune vs moștenire",t:"Ce este clasa de bază în contextul moștenirii?",o:["Clasa la care se ajunge după derivare","Clasa de la care se pleacă la derivare","Clasa care nu poate fi instanțiată","Clasa care conține funcții virtuale pure"],a:[1],multi:false},
+{s:"Grilă — Polimorfism",t:"Care dintre mecanisme reprezintă polimorfism de compilare?",o:["Funcții virtuale","Moștenire","Supraîncărcarea funcțiilor","Parametri cu valori implicite","Template-uri"],a:[2,3,4],multi:true},
+{s:"Grilă — Polimorfism",t:"Care mecanisme realizează polimorfismul de execuție?",o:["Supraîncărcarea operatorilor","Instanțierea dinamică","Moștenirea","Metodele virtuale","Template-uri"],a:[1,2,3],multi:true},
+{s:"Grilă — Polimorfism",t:"Când se ia decizia privind funcția apelată în polimorfismul de execuție?",o:["La compilare","La execuție","La linkeditare","La declararea clasei"],a:[1],multi:false},
+{s:"Grilă — Polimorfism",t:"Care dintre afirmații descriu corect o funcție inline?",o:["Este un mecanism de polimorfism de execuție","Poate produce polimorfism de compilare","Codul este inserat direct la locul apelului","Nu poate fi supraîncărcată"],a:[1,2],multi:true},
+{s:"Grilă — Polimorfism",t:"Constructorii pot produce polimorfism de compilare?",o:["Da","Nu"],a:[0],multi:false},
+{s:"Grilă — Returnare valoare vs referință",t:"La returnarea prin valoare, rezultatul este:",o:["O referință temporară la variabila returnată","Copiat într-o variabilă temporară de tipul funcției","Returnată direct pe stivă, fără copiere","Un pointer la zona de memorie originală"],a:[1],multi:false},
+{s:"Grilă — Returnare valoare vs referință",t:"La returnarea prin referință, se creează:",o:["O copie a valorii returnate","O referință temporară de tipul funcției în funcția apelantă, spre variabila returnată","Un obiect temporar pe heap","Un pointer constant"],a:[1],multi:false},
+{s:"Grilă — Conversii de tip",t:"Prin ce mecanisme se pot realiza conversiile de tip în C++?",o:["Supraîncărcarea operatorului unar cast","Constructori cu un parametru","Funcții friend","Funcții statice"],a:[0,1],multi:true},
+{s:"Grilă — Conversii de tip",t:"Operatorul cast supraîncărcat are sintaxa:",o:["tip operator(TipData)","operator TipData()","TipData operator()","cast operator TipData"],a:[1],multi:false},
+{s:"Grilă — Conversii de tip",t:"Cuvântul-cheie 'explicit' în fața unui constructor cu un parametru are rolul de:",o:["A permite conversia implicită","A preveni conversia implicită","A face constructorul virtual","A face constructorul static"],a:[1],multi:false},
+{s:"Grilă — Clase generice vs abstracte",t:"O clasă template este:",o:["O clasă care conține cel puțin o funcție virtuală pură","Un șablon pentru generarea unor clase concrete ce diferă prin tipul unor date membre","O clasă ce nu poate fi instanțiată","Un mecanism de polimorfism de execuție"],a:[1],multi:false},
+{s:"Grilă — Clase generice vs abstracte",t:"O clasă abstractă este o clasă care:",o:["Nu are constructor","Conține cel puțin o funcție virtuală pură","Are numai metode statice","Este moștenită de mai mult de două clase"],a:[1],multi:false},
+{s:"Grilă — Clase generice vs abstracte",t:"Cum se instanțiază un exemplar al unei clase template?",o:["numeClasa ob;","numeClasa<TipObiect> ob;","template<TipObiect> ob;","numeClasa::TipObiect ob;"],a:[1],multi:false},
+{s:"Grilă — Clase generice vs abstracte",t:"Clasa template este o metodă de implementare a:",o:["Polimorfismului de execuție","Polimorfismului de compilare","Încapsulării","Moștenirii virtuale"],a:[1],multi:false},
+{s:"Grilă — Funcții virtuale",t:"O funcție virtuală pură are sintaxa:",o:["virtual f() {}","virtual f() = 0;","pure virtual f();","f() = virtual;"],a:[1],multi:false},
+{s:"Grilă — Funcții virtuale",t:"Funcțiile virtuale pure trebuie:",o:["Definite și în clasa de bază","Redefinite în clasa derivată","Declarate ca statice","Declarate ca friend"],a:[1],multi:false},
+{s:"Grilă — Funcții virtuale",t:"Care este efectul unei funcții virtuale pure asupra clasei care o conține?",o:["Clasa devine template","Clasa devine abstractă (nu poate fi instanțiată)","Clasa nu mai poate fi moștenită","Clasa devine statică"],a:[1],multi:false},
+{s:"Grilă — Funcții virtuale",t:"La redefinirea unei funcții virtuale în clasa derivată, ce se întâmplă?",o:["Definiția din clasa derivată are prioritate față de cea din clasa de bază","Definiția din clasa de bază rămâne activă","Ambele definiții se apelează simultan","Se produce o eroare de compilare"],a:[0],multi:false},
+{s:"Grilă — Funcții friend",t:"O funcție friend a unei clase:",o:["Este membră a clasei","Are acces la membrii private și protected ai clasei fără a fi membră","Nu poate accesa membrii protejați","Este întotdeauna statică"],a:[1],multi:false},
+{s:"Grilă — Funcții friend",t:"Cum se declară o funcție friend?",o:["Se include prototipul ei în clasă, precedat de cuvântul cheie 'friend'","Se declară în afara clasei cu cuvântul 'friend'","Se adaugă cuvântul 'friend' în implementare","Se moștenește din clasa de bază"],a:[0],multi:false},
+{s:"Grilă — Funcții friend",t:"Un exemplu uzual de funcție friend este:",o:["Constructorul de copiere","Supraîncărcarea operatorului >>","Destructorul","O funcție statică"],a:[1],multi:false},
+{s:"Grilă — Variabile constante și transmitere",t:"O variabilă constantă NU poate fi transmisă ca parametru dacă tipul parametrului este:",o:["Referință constantă","Referință neconstantă","Tip valoare prin constructor de copiere A(const A&a)","Pointer constant"],a:[1],multi:false},
+{s:"Grilă — Variabile constante și transmitere",t:"De ce tipul parametru neconstant creează eroare la transmiterea unei variabile constante?",o:["Deoarece se apelează constructorul de copiere A(A &a), care nu acceptă const","Deoarece constantele nu pot fi copiate","Deoarece nu există constructor implicit","Deoarece variabilele constante nu se alocă pe stivă"],a:[0],multi:false},
+{s:"Grilă — Obiect implicit și this",t:"Pointerul *this referă:",o:["Clasa de bază","Obiectul implicit care apelează metoda","Primul parametru al funcției","Un pointer static al clasei"],a:[1],multi:false},
+{s:"Grilă — Obiect implicit și this",t:"Cum se transmite obiectul implicit în metodă?",o:["Prin valoare","Prin referință (referință constantă dacă metoda e constantă)","Ca pointer explicit","Nu se transmite"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorilor",t:"Care operatori NU pot fi supraîncărcați în C++?",o:["+ și -",". :: , ?:","= și []","<< și >>"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorilor",t:"Care operatori NU pot fi supraîncărcați ca funcții friend (independente)?",o:["<< și >>","= () []","+ și -","== și !="],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorilor",t:"La supraîncărcarea ca funcție independentă, față de supraîncărcarea ca metodă:",o:["Există pointerul *this","Nu există pointerul *this și toți operanzii sunt parametri","Se poate accesa direct câmpurile private","Se reduce numărul de parametri cu 1"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorilor",t:"Ce NU se poate face la supraîncărcarea operatorilor?",o:["Supraîncărcarea operatorilor existenți","Definirea de operatori noi","Supraîncărcarea ca funcție membră","Supraîncărcarea operatorului +"],a:[1],multi:false},
+{s:"Grilă — Moștenire multiplă și virtuală",t:"Problema diamantului apare când:",o:["O clasă moștenește mai mult de 3 clase","Două clase derivate dintr-o clasă de bază sunt moștenite de o a treia clasă","O clasă are mai mult de 10 câmpuri","Se folosesc funcții template"],a:[1],multi:false},
+{s:"Grilă — Moștenire multiplă și virtuală",t:"Moștenirea virtuală rezolvă:",o:["Polimorfismul de compilare","Ambiguitatea din problema diamantului","Supraîncărcarea operatorilor","Conversia de tip"],a:[1],multi:false},
+{s:"Grilă — Moștenire multiplă și virtuală",t:"Sintaxa moștenirii virtuale este:",o:["class D : public A","class D : virtual public A","virtual class D : public A","class D : abstract A"],a:[1],multi:false},
+{s:"Grilă — Moștenire multiplă și virtuală",t:"Care sunt cele 3 metode prin care elementele unei clase pot apărea în dublu exemplar în altă clasă?",o:["Moștenire multiplă nevirtuală","Compunere","Moștenire și compunere din aceeași clasă de bază","Template"],a:[0,1,2],multi:true},
+{s:"Grilă — dynamic_cast și RTTI",t:"Operatorul dynamic_cast<> se poate aplica pe:",o:["Variabile întregi","Pointeri și referințe","Numai pe pointeri la clase abstracte","Variabile de tip float"],a:[1],multi:false},
+{s:"Grilă — dynamic_cast și RTTI",t:"RTTI cuprinde:",o:["Operatorul typeid și dynamic_cast<>","Operatorul sizeof și static_cast<>","Constructorul de copiere și destructorul","Funcțiile template"],a:[0],multi:false},
+{s:"Grilă — dynamic_cast și RTTI",t:"Operatorul typeid permite:",o:["Alocarea dinamică de memorie","Aflarea tipului obiectului la execuție","Convertirea unui tip la altul","Declararea de funcții virtuale"],a:[1],multi:false},
+{s:"Grilă — Pointer vs referință",t:"Care dintre afirmații descriu corect un pointer?",o:["Este un pointer constant care se dereferențiază automat","Poate pointa spre obiecte de orice tip după declarare","Obiectul spre care pointează poate fi schimbat","Odată atribuit unui obiect nu mai poate fi schimbat"],a:[2],multi:false},
+{s:"Grilă — Pointer vs referință",t:"Care afirmație este corectă despre o referință?",o:["Poate fi reatribuită unui alt obiect","Este un pointer constant care se dereferențiază automat","Modificarea referinței nu afectează obiectul referit","Poate fi nulă (null)"],a:[1],multi:false},
+{s:"Grilă — Tratarea excepțiilor",t:"Care cuvinte cheie sunt folosite la tratarea excepțiilor în C++?",o:["try, throw, catch","try, error, handle","begin, raise, except","signal, catch, finally"],a:[0],multi:false},
+{s:"Grilă — Tratarea excepțiilor",t:"Ce se întâmplă dacă se aruncă o excepție și nu există niciun catch corespunzător?",o:["Excepția este ignorată","Apare eroarea de execuție 'Unhandled exception'","Programul continuă normal","Compilatorul semnalează eroarea"],a:[1],multi:false},
+{s:"Grilă — Tratarea excepțiilor",t:"Un catch care prinde orice tip de excepție se scrie:",o:["catch(all)","catch(...)","catch(*)","catch(exception)"],a:[1],multi:false},
+{s:"Grilă — Destructori la moștenire",t:"Care este ordinea de apelare a destructorilor la moștenire?",o:["De la clasa de bază la clasa derivată","De la clasa derivată la clasa de bază","Simultan","Aleatoare"],a:[1],multi:false},
+{s:"Grilă — Destructori la moștenire",t:"La moștenire multiplă, destructorii se apelează:",o:["De la stânga la dreapta în lista de derivare","De la dreapta la stânga în lista de derivare","Toți simultan","Aleatoriu"],a:[1],multi:false},
+{s:"Grilă — Clasă vs obiect",t:"Care este diferența corectă între clasă și obiect?",o:["Obiectul este un tip abstract; clasa este o instanță","Clasa este un tip abstract; obiectul este o instanță a clasei","Ambele alocă memorie la creare","Clasa nu conține metode"],a:[1],multi:false},
+{s:"Grilă — Clasă vs obiect",t:"Când se alocă memorie pentru câmpurile unui obiect?",o:["La declararea clasei","La crearea obiectului (instanțierea)","La apelul oricărei metode","Numai la folosirea operatorului new"],a:[1],multi:false},
+{s:"Grilă — Creare dinamică",t:"Prin ce instrucțiune se alocă memorie dinamică pentru un obiect în C++?",o:["malloc","new","alloc","create"],a:[1],multi:false},
+{s:"Grilă — Creare dinamică",t:"La accesarea metodelor unui obiect creat dinamic se folosește:",o:[". (punct)","-> (săgeată)",":: (rezoluție)","* (dereferențiere)"],a:[1],multi:false},
+{s:"Grilă — Creare dinamică",t:"Eliberarea memoriei unui obiect creat dinamic se face cu:",o:["free","delete","remove","clear"],a:[1],multi:false},
+{s:"Grilă — Funcții șablon (template)",t:"Care apel NU generează o instanță a funcției template?",o:["Apel cu doi parametri de același tip","Apel cu doi parametri de tipuri diferite, când funcția template are 2 parametri de tipul șablonului","Apel cu un parametru","Apel cu parametru de tip referință"],a:[1],multi:false},
+{s:"Grilă — Funcții șablon (template)",t:"Dacă există o funcție cu tip specificat și o funcție template cu același nume, la apel se va executa:",o:["Funcția template","Funcția cu tipul specificat","Ambele","Niciuna, eroare de compilare"],a:[1],multi:false},
+{s:"Grilă — Încapsulare",t:"Care atribut de acces permite accesul la un câmp din orice loc din program?",o:["private","protected","public","static"],a:[2],multi:false},
+{s:"Grilă — Încapsulare",t:"Câmpurile fără atribut de acces explicit au implicit atributul:",o:["public","protected","private","static"],a:[2],multi:false},
+{s:"Grilă — Încapsulare",t:"Câmpurile protected sunt accesibile:",o:["Numai din clasa proprie","Din clasa de bază și din clasele derivate","Din orice clasă","Din orice funcție friend"],a:[1],multi:false},
+{s:"Grilă — Constructor de copiere",t:"Constructorul de copiere are câte un parametru?",o:["Zero","Unul, de tipul clasei","Doi, ambii de tipul clasei","Oricâți"],a:[1],multi:false},
+{s:"Grilă — Constructor de copiere",t:"Forma implicită a constructorului de copiere (dată de compilator) face:",o:["Inițializarea cu valori implicite","Copierea bit cu bit a informației","Alocarea dinamică","Apelul constructorului din clasa de bază"],a:[1],multi:false},
+{s:"Grilă — Constructor de copiere",t:"În care situații se apelează constructorul de copiere?",o:["La transmiterea parametrilor prin valoare","La returnarea rezultatului funcției prin valoare","La crearea unui obiect din alt obiect de același tip","La apelul unui destructor"],a:[0,1,2],multi:true},
+{s:"Grilă — Lista de inițializare",t:"Lista de inițializare a unui constructor apare:",o:["Înainte de antetul constructorului","Între antetul și corpul constructorului","La sfârșitul corpului","În clasa de bază"],a:[1],multi:false},
+{s:"Grilă — Lista de inițializare",t:"La ce NU folosește lista de inițializare?",o:["Inițializarea variabilelor statice","Inițializarea câmpurilor volatile","Inițializarea referințelor","Inițializarea câmpurilor pentru care nu există constructor implicit"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorului []",t:"Operatorul [] trebuie supraîncărcat ca:",o:["Funcție friend","Funcție membră","Funcție statică","Funcție virtuală"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorului []",t:"Operatorul [] este considerat operator:",o:["Unar","Binar","Ternar","De rezoluție"],a:[1],multi:false},
+{s:"Grilă — Supraîncărcarea operatorului []",t:"Pentru ca operatorul [] să poată apărea la stânga unei atribuiri, acesta trebuie să returneze:",o:["O valoare","O referință","Un pointer","Un tip void"],a:[1],multi:false},
+{s:"Grilă — Pointer constant vs pointer la obiect constant",t:"Sintaxa 'const TipDate *p' declară:",o:["Un pointer constant (adresa nu se poate schimba)","Un pointer spre un obiect constant (valoarea nu se poate modifica)","Un pointer la un câmp static","Un pointer la o funcție"],a:[1],multi:false},
+{s:"Grilă — Pointer constant vs pointer la obiect constant",t:"Sintaxa 'TipDate * const p' declară:",o:["Un pointer spre obiect constant","Un pointer constant (adresa nu se poate schimba, dar valoarea da)","Un pointer la o referință","Un pointer nul"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Care este scopul cuvântului cheie 'explicit' aplicat unui constructor?",o:["Să permită conversia implicită","Să prevină conversia implicită nedorită","Să declare constructorul virtual","Să declare constructorul static"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Zona de memorie unde se alocă obiectele create dinamic este:",o:["Stack (stivă)","Heap","Registrele procesorului","Segmentul de date static"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"O clasă abstractă poate fi instanțiată?",o:["Da, ca orice clasă","Nu, nu poate fi instanțiată","Da, dar numai prin new","Da, dacă are constructor public"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Câți destructori poate avea o clasă?",o:["Oricâți","Exact unul","Doi, câte unul pentru fiecare constructor","Zero dacă nu se declară explicit"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Funcțiile statice pot fi virtuale?",o:["Da","Nu"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Care dintre operatori este binar și poate fi supraincarcat NUMAI ca funcție membră?",o:["<<",">>","=","+"],a:[2],multi:false},
+{s:"Grilă — Diverse C++",t:"Care afirmație despre moștenirea privată este corectă?",o:["Câmpurile publice din clasa de bază rămân publice în derivată","Câmpurile publice și protejate din clasa de bază devin private în derivată","Câmpurile private din clasa de bază devin accesibile","Clasa derivată nu poate adăuga câmpuri noi"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Metoda typeid().name() returnează:",o:["Adresa obiectului","Numele tipului la execuție","Dimensiunea obiectului","Numărul de metode"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Care este scopul principal al funcțiilor template față de supraîncărcarea funcțiilor?",o:["Să rezolve polimorfismul de execuție","Să evite scrierea de cod duplicat pentru tipuri diferite","Să permită funcții cu număr variabil de argumente","Să înlocuiască constructorii"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Constructorii pot fi virtuali?",o:["Da","Nu"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Care dintre situații este un exemplu bun de utilizare a clasei template?",o:["Modelarea unui obiect cu caracteristici generale","Un container generic (ex: stivă) care funcționează pentru orice tip de date","Tratarea excepțiilor","Supraîncărcarea operatorului ="],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Încapsularea se referă la:",o:["Moștenirea tuturor metodelor dintr-o clasă de bază","Crearea unui nou tip abstract cu câmpuri și metode, cu atribute de acces","Supraîncărcarea funcțiilor cu aceleași nume","Alocarea dinamică a obiectelor"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Ordinea de apelare a constructorilor la moștenire este:",o:["De la clasa derivată la clasa de bază","De la clasa de bază la clasa derivată","Aleatoare","Depinde de implementare"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Care operator de cast realizează verificare la execuție și este parte din RTTI?",o:["static_cast","reinterpret_cast","dynamic_cast","const_cast"],a:[2],multi:false},
+{s:"Grilă — Diverse C++",t:"Ce se întâmplă dacă nu se definește explicit un constructor de copiere?",o:["Clasa nu poate fi instanțiată","Compilatorul furnizează unul implicit care face copiere bit cu bit","Apare eroare de compilare","Clasa devine abstractă"],a:[1],multi:false},
+{s:"Grilă — Diverse C++",t:"Cuvântul cheie 'virtual' poate apărea în context de:",o:["Funcții virtuale","Moștenire virtuală","Funcții statice","Funcții friend"],a:[0,1],multi:true},
+{s:"Adevărat / Fals",t:"O variabilă statică a unei clase este instanțiată indiferent dacă există sau nu obiecte declarate.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Metodele statice pot accesa variabilele nestatice ale clasei.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"La transmiterea prin valoare, nu se poate pasa o expresie ca argument.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"O funcție virtuală pură este o funcție fără definiție în clasa de bază.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"O clasă abstractă poate fi instanțiată direct.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"O funcție friend are acces la membrii private și protected ai clasei fără a fi membră.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Funcțiile statice pot fi virtuale.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"Operatorul '.' poate fi supraîncărcat în C++.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"La moștenire privată, câmpurile publice ale clasei de bază devin private în clasa derivată.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Destructorii se apelează în ordine inversă față de constructori.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Constructorii cu un parametru sunt tratați automat ca metode de conversie implicită.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Moștenirea virtuală este necesară pentru a rezolva problema diamantului.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Operatorul [] poate fi supraîncărcat ca funcție friend.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"Obiectele create cu 'new' se alocă pe stivă (stack).",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"O referință, odată atribuită unui obiect, nu mai poate fi reatribuită altui obiect.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Template-urile sunt un mecanism de polimorfism de compilare.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Pointerul *this există și în funcțiile statice.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"O clasă template este un mecanism de polimorfism de execuție.",o:["Adevărat","Fals"],a:[1],multi:false},
+{s:"Adevărat / Fals",t:"Constructorii nu pot fi virtuali în C++.",o:["Adevărat","Fals"],a:[0],multi:false},
+{s:"Adevărat / Fals",t:"Câmpurile declarate fără atribut de acces într-o clasă C++ sunt implicit private.",o:["Adevărat","Fals"],a:[0],multi:false},
+];
+
+let cur=0, score=0, answered=false, selected=[];
+const total=QUESTIONS.length;
+
+function render(){
+  const app=document.getElementById('app');
+  if(cur>=total){renderFinal(app);return;}
+  const q=QUESTIONS[cur];
+  const pct=Math.round((cur/total)*100);
+  const letters='ABCD';
+  app.innerHTML=`
+<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+<div class="score-row">
+  <span>Întrebarea <span class="score-num">${cur+1}</span> din ${total}</span>
+  <span style="margin-left:auto">Scor: <span class="score-num">${score}</span></span>
+</div>
+<span class="section-badge">${q.s}</span>
+<div class="q-num">Întrebarea ${cur+1}</div>
+<div class="q-text">${q.t}</div>
+${q.multi?'<div class="multi-hint">Pot fi mai multe răspunsuri corecte.</div>':''}
+${q.s.startsWith('Adevărat')?renderTF(q):renderOpts(q,letters)}
+<div id="fb"></div>
+<div class="nav">
+  <button class="btn primary" id="check-btn" onclick="check()">${answered?'Următoarea →':'Verifică'}</button>
+</div>`;
+}
+
+function renderOpts(q,letters){
+  return`<div class="options">${q.o.map((o,i)=>`<div class="opt" id="opt${i}" onclick="toggle(${i})">${q.multi?`<span class="opt-letter"><input type="checkbox" id="cb${i}" style="margin:0"> ${letters[i]}</span>`:`<span class="opt-letter">${letters[i]}</span>`}<span>${o}</span></div>`).join('')}</div>`;
+}
+function renderTF(q){
+  return`<div class="tf-opts"><button class="tf-btn" id="opt0" onclick="toggle(0)">Adevărat</button><button class="tf-btn" id="opt1" onclick="toggle(1)">Fals</button></div>`;
+}
+
+function toggle(i){
+  if(answered)return;
+  const q=QUESTIONS[cur];
+  if(!q.multi){selected=[i];}
+  else{if(selected.includes(i))selected=selected.filter(x=>x!==i);else selected.push(i);}
+  q.o.forEach((_,j)=>{
+    const el=document.getElementById('opt'+j);
+    if(el){el.classList.toggle('selected',selected.includes(j));}
+    const cb=document.getElementById('cb'+j);
+    if(cb)cb.checked=selected.includes(j);
+  });
+}
+
+function check(){
+  if(answered){cur++;selected=[];answered=false;render();return;}
+  if(selected.length===0)return;
+  answered=true;
+  const q=QUESTIONS[cur];
+  const correct=q.a.slice().sort().join(',');
+  const got=selected.slice().sort().join(',');
+  const isRight=correct===got;
+  if(isRight)score++;
+  q.o.forEach((_,j)=>{
+    const el=document.getElementById('opt'+j);
+    if(!el)return;
+    const isAns=q.a.includes(j);
+    const isSel=selected.includes(j);
+    if(isAns&&isSel)el.classList.add('correct');
+    else if(!isAns&&isSel)el.classList.add('wrong');
+    else if(isAns&&!isSel)el.classList.add('missed');
+  });
+  const fb=document.getElementById('fb');
+  if(fb){
+    const correctLabels=q.a.map(i=>q.o[i]).join(', ');
+    fb.innerHTML=`<div class="feedback ${isRight?'ok':'nok'}">${isRight?'✓ Corect!':'✗ Greșit. Răspuns corect: <strong>'+correctLabels+'</strong>'}</div>`;
+  }
+  document.getElementById('check-btn').textContent='Următoarea →';
+}
+
+function renderFinal(app){
+  const pct=Math.round((score/total)*100);
+  let emoji=pct>=90?'🏆':pct>=70?'👍':pct>=50?'📚':'💪';
+  app.innerHTML=`<div class="final-card">
+<div style="font-size:36px;margin-bottom:0.5rem">${emoji}</div>
+<div class="final-score">${score}/${total}</div>
+<div class="final-label">${pct}% răspunsuri corecte</div>
+<div class="stat-row">
+  <div class="stat"><div class="stat-n" style="color:#0F6E56">${score}</div><div class="stat-l">corecte</div></div>
+  <div class="stat"><div class="stat-n" style="color:#993C1D">${total-score}</div><div class="stat-l">greșite</div></div>
+</div>
+<button class="btn primary" onclick="restart()">Încearcă din nou ↺</button>
+</div>`;
+}
+
+function restart(){cur=0;score=0;answered=false;selected=[];render();}
+render();
+</script>

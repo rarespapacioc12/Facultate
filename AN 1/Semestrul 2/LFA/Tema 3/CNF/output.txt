@@ -1,0 +1,15 @@
+Neterminale: C C1 C2 C3 R R0 S T X X_a X_b
+Terminale: a b
+Simbol de start: R0
+Reguli:
+R0 -> X C | X_a C1 | X_b C2
+C -> R X
+C1 -> T X_b | b
+C2 -> T X_a | a
+C3 -> T X | a | b
+R -> X C | X_a C1 | X_b C2
+S -> X_a C1 | X_b C2
+T -> X C3 | a | b
+X -> a | b
+X_a -> a
+X_b -> b

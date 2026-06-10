@@ -1,0 +1,13 @@
+Cuvinte de lungime 4 din L(G):
+aaab
+aaba
+aabb
+abaa
+abab
+abbb
+baaa
+baba
+babb
+bbaa
+bbab
+bbba

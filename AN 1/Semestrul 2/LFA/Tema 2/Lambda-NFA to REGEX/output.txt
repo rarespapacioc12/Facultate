@@ -1,1 +1,1 @@
-b*a(b|ab*a)*
+a*bc*|a*cb*
